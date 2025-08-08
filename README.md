@@ -1,4 +1,4 @@
-# H5P Content Slider
+# H5P Gamifier
 
 ## Getting started
 Clone this repository with git and check out the branch that you are interested
