@@ -1,0 +1,167 @@
+[
+  {
+    "name": "content",
+    "type": "list",
+    "label": "List of contents",
+    "importance": "high",
+    "widgets": [
+      {
+        "name": "VerticalTabs",
+        "label": "Default"
+      }
+    ],
+    "min": 1,
+    "entity": "content",
+    "field": {
+      "name": "content",
+      "type": "group",
+      "fields": [
+        {
+          "name": "libraryParams",
+          "type": "library",
+          "label": "Content",
+          "importance": "high",
+          "options": [
+            "H5P.Blanks 1.14",
+            "H5P.AdvancedText 1.1"
+          ]
+        },
+        {
+          "name": "attempts",
+          "type": "number",
+          "label": "Attempts",
+          "description": "Number of attempts a user has to complete the content.",
+          "min": 1,
+          "optional": true
+        },
+        {
+          "name": "timeLimit",
+          "type": "number",
+          "label": "Time limit",
+          "description": "Optional time limit in seconds. If a user exceeds this time, the exercise cannot be edited anymore.",
+          "min": 1,
+          "optional": true
+        }
+      ]
+    }
+  },
+  {
+    "name": "behaviour",
+    "type": "group",
+    "importance": "low",
+    "label": "Behavioural settings",
+    "fields": [
+      {
+        "name": "globalTimeLimit",
+        "type": "number",
+        "label": "Global time limit",
+        "description": "Optional global time limit in seconds. If a user exceeds this time, all the exercises cannot be edited anymore.",
+        "min": 1,
+        "optional": true
+      },
+      {
+        "name": "cycle",
+        "type": "boolean",
+        "label": "Cycle through contents",
+        "description": "Go back to first item after last and vide versa.",
+        "default": false
+      },
+      {
+        "name": "displayPageAnnouncement",
+        "type": "boolean",
+        "label": "Display current page in toolbar",
+        "default": true
+      },
+      {
+        "name": "displayContentAnnouncement",
+        "type": "boolean",
+        "label": "Display content title in toolbar",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "l10n",
+    "type": "group",
+    "label": "User interface",
+    "common": true,
+    "fields": [
+      {
+        "name": "pageAnnouncement",
+        "type": "text",
+        "label": "Page announcement",
+        "default": "@current / @total",
+        "description": "@current and @total are placeholders and will be replaced by the respective values."
+      },
+      {
+        "name": "noTitle",
+        "type": "text",
+        "label": "Content without a title",
+        "default": "Untitled"
+      },
+      {
+        "name": "timeExpiredExercise",
+        "type": "text",
+        "label": "Time expired for exercise",
+        "default": "You ran out of time for this exercise!"
+      },
+      {
+        "name": "timeExpiredGlobal",
+        "type": "text",
+        "label": "Time expired for global",
+        "default": "You ran out of time for this content!"
+      }
+    ]
+  },
+  {
+    "name": "a11y",
+    "type": "group",
+    "label": "Accessibility texts",
+    "common": true,
+    "fields": [
+      {
+        "name": "previousContent",
+        "type": "text",
+        "label": "Previous content",
+        "default": "Go to previous content."
+      },
+      {
+        "name": "nextContent",
+        "type": "text",
+        "label": "Next content",
+        "default": "Go to next content."
+      },
+      {
+        "name": "previousContentDisabled",
+        "type": "text",
+        "label": "Previous content disabled",
+        "default": "Going to previous content is currently not possible."
+      },
+      {
+        "name": "nextContentDisabled",
+        "type": "text",
+        "label": "Next content disabled",
+        "default": "Going to next content is currently not possible."
+      },
+      {
+        "name": "movedTo",
+        "type": "text",
+        "label": "Moved to page",
+        "default": "Moved to page @current of @total.",
+        "description": "@current and @total are placeholders and will be replaced by the respective values."
+      },
+      {
+        "name": "navigationTop",
+        "type": "text",
+        "label": "Top navigation",
+        "default": "Top navigation bar"
+      },
+      {
+        "name": "navigationBottom",
+        "type": "text",
+        "label": "Bottom navigation",
+        "default": "Bottom navigation bar"
+      }
+    ]
+  }
+]

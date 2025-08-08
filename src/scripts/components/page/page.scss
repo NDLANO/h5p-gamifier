@@ -1,0 +1,35 @@
+.h5p-gamifier-page {
+  float: left;
+  margin-left: -100%;
+  padding: 0 0.5rem;
+  position: relative;
+  transition: left .35s;
+  width: 100%;
+
+  /* Remove fullscreen for video tags and DQ */
+  .h5p-gamifier-content-instance video::-webkit-media-controls-fullscreen-button,
+  .h5p-gamifier-content-instance .h5p-my-fullscreen-button-enter {
+    display: none;
+  }
+
+  .h5p-gamifier-content-instance.display-none {
+    display: none;
+  }
+
+  &.past {
+    left: 0%;
+  }
+
+  &.present {
+    left: 100%;
+    z-index: 2;
+  }
+
+  &.future {
+    left: 200%;
+  }
+
+  &.display-none {
+    display: none;
+  }
+}

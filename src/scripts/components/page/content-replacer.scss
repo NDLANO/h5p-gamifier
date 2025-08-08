@@ -1,0 +1,49 @@
+.h5p-content-replacer {
+  aspect-ratio: 16 / 9;
+  align-items: center;
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+  padding: 2rem 1rem;
+
+  &.display-none {
+    display: none;
+  }
+
+  .h5p-content-replacer-icon {
+    --size: 5rem;
+    height: var(--size);
+    position: relative;
+    width: var(--size);
+
+    &::before {
+      content: '';
+      font-family: "H5PFontAwesome4", sans-serif;
+      font-size: var(--size);
+      height: var(--size);
+      left: 50%;
+      line-height: var(--size);
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: var(--size);
+    }
+
+    &.clock::before {
+      content: var(--icon-fontawesome-clock);
+      padding-left: 0.5rem; /* Font icon is not centered */
+    }
+
+    &.heart::before {
+      content: var(--icon-fontawesome-heart);
+    }
+  }
+
+  .h5p-content-replacer-text {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+}

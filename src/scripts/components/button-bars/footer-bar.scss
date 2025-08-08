@@ -1,0 +1,82 @@
+.h5p-gamifier-button-bar.footer {
+  box-shadow: 0.125rem 0.125rem 0.25rem var(--color-box-shadow);
+  display: grid;
+  grid-template-columns: auto 1fr 1fr auto;
+
+
+  .h5p-gamifier-page-announcer {
+    display: flex;
+    justify-content: center;
+    font-size: 1.125rem;
+    font-weight: bold;
+    text-align: center;
+
+    .highlighted {
+      color: var(--color-primary);
+    }
+  }
+
+  .status-containers {
+    .status-container-time {
+      &::before {
+        content: var(--icon-fontawesome-clock);
+        font-family: "H5PFontAwesome4", sans-serif;
+      }
+    }
+
+    .status-container-attempts {
+      &::before {
+        content: var(--icon-fontawesome-heart);
+        font-family: "H5PFontAwesome4", sans-serif;
+      }
+    }
+  }
+}
+
+@container h5p-gamifier-main (max-width: 640px) {
+  .h5p-gamifier-button-bar.footer {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+
+    .h5p-gamifier-button-left {
+      grid-area: 1 / 1 / 2 / 2;
+    }
+
+    .h5p-gamifier-page-announcer {
+      grid-area: 2 / 1 / 3 / 2;
+    }
+
+    .status-containers {
+      grid-area: 2 / 2 / 3 / 3;
+    }
+
+    .h5p-gamifier-button-right {
+      grid-area: 1 / 2 / 2 / 3;
+      justify-self: end;
+    }
+  }
+}
+
+@container h5p-gamifier-main (max-width: 480px) {
+  .h5p-gamifier-button-bar.footer {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+
+    .h5p-gamifier-button-left {
+      grid-area: 1 / 1 / 2 / 2;
+    }
+
+    .h5p-gamifier-page-announcer {
+      grid-area: 2 / 1 / 3 / 3;
+    }
+
+    .status-containers {
+      grid-area: 3 / 1 / 4 / 3;
+    }
+
+    .h5p-gamifier-button-right {
+      grid-area: 1 / 2 / 2 / 3;
+      justify-self: end;
+    }
+  }
+}

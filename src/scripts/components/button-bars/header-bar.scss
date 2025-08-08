@@ -1,0 +1,31 @@
+.h5p-gamifier-button-bar.header {
+    box-shadow: 0.125em 0.125em 0.5em var(--color-box-shadow);
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: .5em;
+
+  .status-containers {
+    margin-inline: auto 1rem;
+
+    .status-container-time {
+      &::before {
+        content: var(--icon-fontawesome-clock);
+        font-family: "H5PFontAwesome4", sans-serif;
+      }
+    }
+
+    .status-container-score {
+      &::before {
+        content: var(--icon-fontawesome-star);
+        font-family: "H5PFontAwesome4", sans-serif;
+      }
+    }
+  }
+
+  .h5p-gamifier-buttons-container {
+    justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+  }
+}

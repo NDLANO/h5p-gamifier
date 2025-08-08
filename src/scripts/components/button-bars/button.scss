@@ -1,0 +1,75 @@
+.h5p-gamifier-button {
+  border: 2px solid var(--color-text-light); /* Same px value as used by Joubel in Interactive Book */
+  border-radius: 3px; /* Same px value as used by Joubel in Interactive Book */
+  color: var(--color-primary);
+  flex-shrink: 0;
+  font-size: 1em;
+  height: var(--button-size);
+  padding: 0;
+  position: relative;
+  width: var(--button-size);
+
+  &.regular {
+    background-color: var(--color-primary-5);
+  }
+
+  &.plain {
+    background-color: var(--color-text-light);
+  }
+
+  &::before {
+    color: var(--color-disabled);
+    font-family: "H5PFontAwesome4", sans-serif;
+    font-size: var(--background-size);
+    height: var(--background-size);
+    left: 50%;
+    margin-left: calc(-1 * var(--background-size) / 2);
+    margin-top: calc(-1 * var(--background-size) / 2);
+    position: absolute;
+    top: 50%;
+    width: var(--background-size);
+  }
+
+  &.display-none {
+    display: none;
+  }
+
+  &.h5p-gamifier-button-audio::before {
+    content: var(--icon-fontawesome-volume-off);
+  }
+
+  &.h5p-gamifier-button-audio.on::before {
+    content: var(--icon-fontawesome-volume-high);
+  }
+
+  &.h5p-gamifier-button-fullscreen::before {
+    content: var(--icon-fontawesome-expand);
+  }
+
+  &.h5p-gamifier-button-fullscreen.exit::before {
+    content: var(--icon-fontawesome-compress);
+  }
+
+  &.h5p-gamifier-button-left::before {
+    content: var(--icon-fontawesome-chevron-left);
+  }
+
+  &.h5p-gamifier-button-right::before {
+    content: var(--icon-fontawesome-chevron-right);
+  }
+
+  &:not(.disabled) {
+    &::before {
+      color: var(--color-primary);
+    }
+
+    &:hover {
+      background-color: var(--color-primary-10);
+      cursor: pointer;
+    }
+
+    &:active {
+      background-color: var(--color-primary-25);
+    }
+  }
+}
