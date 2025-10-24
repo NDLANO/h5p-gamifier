@@ -105,10 +105,10 @@ export default class Main {
       },
       {
         onClickButtonAudio: () => {
-          console.log('Audio button clicked');
+          console.warn('Audio button clicked');
         },
         onClickButtonFullscreen: () => {
-          console.log('Fullscreen button clicked');
+          console.warn('Fullscreen button clicked');
         }
       }
     );
