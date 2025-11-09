@@ -38,7 +38,7 @@
     content: var(--icon-fontawesome-volume-off);
   }
 
-  &.h5p-gamifier-button-audio.on::before {
+  &.h5p-gamifier-button-audio.active::before {
     content: var(--icon-fontawesome-volume-high);
   }
 

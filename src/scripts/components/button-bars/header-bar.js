@@ -12,8 +12,7 @@ export default class HeaderBar {
    * @param {object} [callbacks] Callbacks.
    */
   constructor(params = {}, callbacks = {}) {
-    this.params = Util.extend({
-    }, params);
+    this.params = Util.extend({}, params);
 
     this.callbacks = Util.extend({
       onClickButtonAudio: () => {},
@@ -39,50 +38,53 @@ export default class HeaderBar {
     buttonsContainer.classList.add('h5p-gamifier-buttons-container');
     this.dom.append(buttonsContainer);
 
-    this.buttons.audio = new Button(
-      {
-        a11y: {
-          active: this.params.dictionary.get('TODO'),
-          disabled: this.params.dictionary.get('TODO'),
+    if (this.params.hasAudio) {
+      this.buttons.audio = new Button(
+        {
+          a11y: {
+            active: this.params.dictionary.get('a11y.mute'),
+            inactive: this.params.dictionary.get('a11y.unmute')
+          },
+          classes: [
+            'h5p-gamifier-button',
+            'h5p-gamifier-button-audio',
+            'regular'
+          ],
+          type: 'toggle'
         },
-        classes: [
-          'h5p-gamifier-button',
-          'h5p-gamifier-button-audio',
-          'regular'
-        ],
-        type: 'pulse'
-      },
-      {
-        onClick: () => {
-          this.callbacks.onClickButtonAudio();
+        {
+          onClick: (options) => {
+            this.callbacks.onClickButtonAudio(options.active);
+          }
         }
-      }
-    );
+      );
+      buttonsContainer.append(this.buttons.audio.getDOM());
+    }
 
-    this.buttons.fullscreen = new Button(
-      {
-        a11y: {
-          active: this.params.dictionary.get('a11y.TODO'),
-          disabled: this.params.dictionary.get('a11y.TODO'),
+    if (this.params.hasFullscreen) {
+      this.buttons.fullscreen = new Button(
+        {
+          a11y: {
+            active: this.params.dictionary.get('a11y.TODO'),
+          },
+          classes: [
+            'h5p-gamifier-button',
+            'h5p-gamifier-button-fullscreen',
+            'regular'
+          ],
+          type: 'pulse',
         },
-        classes: [
-          'h5p-gamifier-button',
-          'h5p-gamifier-button-fullscreen',
-          'regular'
-        ],
-        type: 'pulse'
-      },
-      {
-        onClick: () => {
-          this.callbacks.onClickButtonFullscreen();
+        {
+          onClick: () => {
+            this.callbacks.onClickButtonFullscreen();
+          }
         }
-      }
-    );
+      );
 
-    buttonsContainer.append(this.buttons.audio.getDOM());
-    buttonsContainer.append(this.buttons.fullscreen.getDOM());
+      buttonsContainer.append(this.buttons.fullscreen.getDOM());
+    }
 
-    this.setButtonTabbable('audio');
+    this.setButtonTabbable(Object.keys(this.buttons)[0]);
   }
 
   /**
@@ -98,6 +100,10 @@ export default class HeaderBar {
    * @param {string} name Name of the button.
    */
   setButtonTabbable(name) {
+    if (!this.buttons[name]) {
+      return; // Button not available
+    }
+
     this.currentTabbableButton = name;
 
     for (let key in this.buttons) {

@@ -54,6 +54,63 @@
     }
   },
   {
+    "name": "audio",
+    "type": "group",
+    "importance": "low",
+    "label": "Audio settings",
+    "fields": [
+      {
+        "name": "backgroundMusic",
+        "type": "audio",
+        "label": "Background music",
+        "optional": true
+      },
+      {
+        "name": "events",
+        "type": "group",
+        "label": "Event sounds",
+        "importance": "low",
+        "fields": [
+          {
+            "name": "goto",
+            "type": "audio",
+            "label": "Go previous/next content",
+            "description": "Sound played when navigating to the previous or next content.",
+            "optional": true
+          },
+          {
+            "name": "lostLife",
+            "type": "audio",
+            "label": "Lost a life",
+            "description": "Will be played when the user loses a life.",
+            "optional": true
+          },
+          {
+            "name": "attemptsExceeded",
+            "type": "audio",
+            "label": "Attempts exceeded",
+            "description": "Will be played when the user exceeds the maximum number of attempts for an exercise.",
+            "optional": true
+          },
+          {
+            "name": "timeExpired",
+            "type": "audio",
+            "label": "Time expired",
+            "description": "Sound played when the time is up for one exercise.",
+            "optional": true
+          },
+          {
+            "name": "timeExpiredTotal",
+            "type": "audio",
+            "label": "Time expired total",
+            "description": "Sound played when the time is up for all exercises.",
+            "optional": true
+          }
+        ]
+      }
+    ]
+  },
+  {
     "name": "behaviour",
     "type": "group",
     "importance": "low",
@@ -140,18 +197,6 @@
         "default": "Go to next content."
       },
       {
-        "name": "previousContentDisabled",
-        "type": "text",
-        "label": "Previous content disabled",
-        "default": "Going to previous content is currently not possible."
-      },
-      {
-        "name": "nextContentDisabled",
-        "type": "text",
-        "label": "Next content disabled",
-        "default": "Going to next content is currently not possible."
-      },
-      {
         "name": "movedTo",
         "type": "text",
         "label": "Moved to page",
@@ -169,6 +214,18 @@
         "type": "text",
         "label": "Bottom navigation",
         "default": "Bottom navigation bar"
+      },
+      {
+        "name": "mute",
+        "type": "text",
+        "label": "Mute audio",
+        "default": "Mute audio"
+      },
+      {
+        "name": "unmute",
+        "type": "text",
+        "label": "Unmute audio",
+        "default": "Unmute audio"
       }
     ]
   }

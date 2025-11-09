@@ -1,8 +1,10 @@
 .h5p-gamifier-button-bar.header {
-    box-shadow: 0.125em 0.125em 0.5em var(--color-box-shadow);
+    --padding-header: 0.5rem;
+    box-shadow: 0.125rem 0.125rem 0.5rem var(--color-box-shadow);
     flex-wrap: wrap;
     justify-content: center;
-    padding: .5em;
+    min-height: calc(var(--button-size) + 2 * var(--padding-header));
+    padding: var(--padding-header);
 
   .status-containers {
     margin-inline: auto 1rem;
@@ -26,6 +28,6 @@
     justify-content: center;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5em;
+    gap: 0.5rem;
   }
 }

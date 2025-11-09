@@ -41,7 +41,6 @@ export default class FooterBar {
       {
         a11y: {
           active: this.params.dictionary.get('a11y.previousContent'),
-          disabled: this.params.dictionary.get('a11y.previousContentDisabled'),
         },
         classes: [
           'h5p-gamifier-button',
@@ -62,7 +61,6 @@ export default class FooterBar {
       {
         a11y: {
           active: this.params.dictionary.get('a11y.nextContent'),
-          disabled: this.params.dictionary.get('a11y.nextContentDisabled'),
         },
         classes: [
           'h5p-gamifier-button',

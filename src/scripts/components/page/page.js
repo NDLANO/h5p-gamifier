@@ -77,11 +77,13 @@ export default class Page {
       },
       {
         onScored: (event = {}) => {
+          const before = this.attemptsLeft;
+
           if (!event.success) {
             this.attemptsLeft--;
           }
 
-          this.callbacks.onScoreChanged(this.params.index);
+          this.callbacks.onScoreChanged(this.params.index, { before: before, after: this.attemptsLeft });
 
           if (this.attemptsLeft <= 0) {
             this.callbacks.onAttemptsExceeded(this.params.index);
@@ -267,6 +269,7 @@ export default class Page {
 
     this.attemptsLeft = this.params.attemptsMax ?? Infinity;
     this.timeLeft = (this.params.timeMax ?? Infinity) * 1000;
+    this.timer?.start(this.timeLeft);
   }
 
   /**

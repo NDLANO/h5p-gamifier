@@ -34,9 +34,6 @@ export default class Button {
       }
     }
 
-    this.active = this.params.active;
-    this.disabled = this.params.disabled;
-
     // Sanitize callbacks
     this.callbacks = callbacks || {};
     this.callbacks.onClick = this.callbacks.onClick || (() => {});
@@ -66,14 +63,15 @@ export default class Button {
     }
 
     this.dom.addEventListener('click', (event) => {
-      if (this.disabled) {
+      if (this.isDisabledState) {
         return;
       }
 
       if (this.params.type === 'toggle') {
         this.toggle();
       }
-      this.callbacks.onClick(event);
+
+      this.callbacks.onClick({ active: this.active });
     });
   }
 
@@ -111,21 +109,21 @@ export default class Button {
    * @param {boolean} tabbable If true, set tabbable. If false, untabbable.
    */
   setTabbable(tabbable) {
-    if (tabbable === true) {
-      this.dom.setAttribute('tabindex', '0');
+    if (typeof tabbable !== 'boolean') {
+      return;
     }
-    else if (tabbable === false) {
-      this.dom.setAttribute('tabindex', '-1');
-    }
+
+    this.dom.setAttribute('tabindex', tabbable ? '0' : '-1');
   }
 
   /**
    * Enable button.
    */
   enable() {
-    this.disabled = false;
-
+    this.isDisabledState = false;
     this.dom.classList.remove('disabled');
+    this.dom.setAttribute('aria-disabled', 'false');
+
 
     if (this.active) {
       this.activate();
@@ -140,16 +138,18 @@ export default class Button {
    */
   disable() {
     this.dom.classList.add('disabled');
-    this.dom.setAttribute('aria-label', this.params.a11y.disabled);
-
-    this.disabled = true;
+    if (this.params.a11y.disabled) {
+      this.dom.setAttribute('aria-label', this.params.a11y.disabled);
+    }
+    this.dom.setAttribute('aria-disabled', 'true');
+    this.isDisabledState = true;
   }
 
   /**
    * Activate button.
    */
   activate() {
-    if (this.disabled) {
+    if (this.isDisabledState) {
       return;
     }
 
@@ -167,7 +167,7 @@ export default class Button {
    * Deactivate button.
    */
   deactivate() {
-    if (this.disabled) {
+    if (this.isDisabledState) {
       return;
     }
 
@@ -185,7 +185,7 @@ export default class Button {
    * Toggle active state.
    */
   toggle() {
-    if (this.disabled) {
+    if (this.isDisabledState) {
       return;
     }
 
@@ -219,6 +219,6 @@ export default class Button {
    * @returns {boolean} True, if button is disabled, else false.
    */
   isDisabled() {
-    return this.disabled;
+    return this.isDisabledState;
   }
 }

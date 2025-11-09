@@ -1,5 +1,6 @@
 import Dictionary from '@services/dictionary.js';
 import Globals from '@services/globals.js';
+import Jukebox from '@services/jukebox.js';
 import Util from '@services/util.js';
 import { getSemanticsDefaults } from './services/h5p-util.js';
 import Main from '@components/main.js';
@@ -18,6 +19,7 @@ export default class Gamifier extends H5P.EventDispatcher {
     super();
 
     const defaults = Util.extend({
+      audio: {},
       behaviour: {
         enableRetry: false, // @see {@link https://h5p.org/documentation/developers/contracts#guides-header-9}
         enableSolutionsButton: false, // @see {@link https://h5p.org/documentation/developers/contracts#guides-header-8}
@@ -44,8 +46,14 @@ export default class Gamifier extends H5P.EventDispatcher {
       this.trigger('resize');
     });
 
+    this.jukebox = new Jukebox();
+    this.fillJukebox();
+    this.jukebox.muteAll();
+
     const defaultLanguage = extras?.metadata?.defaultLanguage || 'en';
     this.languageTag = Util.formatLanguageCode(defaultLanguage);
+
+    const fullScreenSupported = this.isRoot() && H5P.fullscreenSupported;
 
     this.dom = document.createElement('div');
     this.dom.classList.add('h5p-gamifier');
@@ -53,7 +61,10 @@ export default class Gamifier extends H5P.EventDispatcher {
     this.main = new Main(
       {
         dictionary: this.dictionary,
-        globals: this.globals
+        globals: this.globals,
+        jukebox: this.jukebox,
+        hasFullscreen: fullScreenSupported,
+        hasAudio: this.jukebox.getAudioIds().length > 0
       },
       {
         onProgressed: (index) => {
@@ -105,6 +116,44 @@ export default class Gamifier extends H5P.EventDispatcher {
    */
   getDescription() {
     return this.params.taskDescription || DEFAULT_DESCRIPTION;
+  }
+
+  /**
+   * Fill jukebox with audios.
+   */
+  fillJukebox() {
+    const audios = {};
+
+    if (this.params.audio.backgroundMusic?.[0]?.path) {
+      const src = H5P.getPath(this.params.audio.backgroundMusic[0].path, this.contentId);
+      const crossOrigin = H5P.getCrossOrigin?.(this.params.audio.backgroundMusic[0]) ?? 'Anonymous';
+
+      audios.backgroundMusic = {
+        src: src,
+        crossOrigin: crossOrigin,
+        options: { loop: true, groupId: 'background' },
+      };
+    }
+
+    for (const key in this.params.audio.events) {
+      if (!this.params.audio.events[key]?.[0]?.path) {
+        continue;
+      }
+      if (!this.params.audio.events[key]?.[0]?.path) {
+        continue;
+      }
+
+      const src = H5P.getPath(this.params.audio.events[key][0].path, this.contentId);
+
+      const crossOrigin = H5P.getCrossOrigin?.(this.params.audio.events[key][0]) ?? 'Anonymous';
+
+      audios[key] = {
+        src: src,
+        crossOrigin: crossOrigin,
+      };
+    }
+
+    this.jukebox.fill(audios);
   }
 
   /**

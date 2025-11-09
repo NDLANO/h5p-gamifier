@@ -55,15 +55,25 @@ export default class Main {
             this.updateExerciseTime();
           },
           onTimeExpired: (index) => {
+            this.params.jukebox.play('timeExpired');
             this.pages[index].showTimeExpired(this.params.dictionary.get('l10n.timeExpiredExercise'));
           },
-          onScoreChanged: () => {
+          onScoreChanged: (index, values = {}) => {
+            if (typeof values.before === 'number' && typeof values.after === 'number') {
+              const scoreChange = values.after - values.before;
+              if (scoreChange < 0) {
+                this.params.jukebox.play('lostLife');
+              }
+            }
+
             this.updateExerciseAttempts();
             this.updateScoreDisplay();
           },
           onAttemptsExceeded: (index) => {
             this.pages[index].stopTimer();
             this.pages[index].showAttemptsExceeded();
+            this.params.jukebox.stop('lostLife');
+            this.params.jukebox.play('attemptsExceeded');
           }
         }
       );
@@ -102,10 +112,12 @@ export default class Main {
       {
         dictionary: this.params.dictionary,
         statusContainers: this.statusContainersGlobal,
+        hasAudio: this.params.hasAudio,
+        hasFullscreen: this.params.hasFullscreen
       },
       {
-        onClickButtonAudio: () => {
-          console.warn('Audio button clicked');
+        onClickButtonAudio: (on) => {
+          this.toggleAudio(on);
         },
         onClickButtonFullscreen: () => {
           console.warn('Fullscreen button clicked');
@@ -160,6 +172,22 @@ export default class Main {
    */
   getDOM() {
     return this.dom;
+  }
+
+  /**
+   * Toggle audio on/off.
+   * @param {boolean} [on] True to turn audio on, false to turn off.
+   */
+  toggleAudio(on) {
+    this.isAudioOn = (typeof on === 'boolean') ? on : !this.isAudioOn;
+
+    if (!this.isAudioOn) {
+      this.params.jukebox.muteAll();
+    }
+    else {
+      this.params.jukebox.unmuteAll();
+      this.params.jukebox.play('backgroundMusic');
+    }
   }
 
   /**
@@ -273,6 +301,7 @@ export default class Main {
       this.pages[this.currentPageIndex].startTimer();
     }
 
+    this.params.jukebox.play('goto');
     this.callbacks.onProgressed(this.currentPageIndex);
   }
 
@@ -283,6 +312,9 @@ export default class Main {
       page.stopTimer();
       page.showTimeExpired(this.params.dictionary.get('l10n.timeExpiredGlobal'));
     });
+
+    this.params.jukebox.stop('timeExpired');
+    this.params.jukebox.play('timeExpiredTotal');
   }
 
   /**
@@ -451,6 +483,11 @@ export default class Main {
    * Reset.
    */
   reset() {
+    const isAudioOn = this.isAudioOn;
+    if (isAudioOn) {
+      this.params.jukebox.muteAll();
+    }
+
     this.timer?.stop();
     this.timeLeft = (this.params.globals.get('params').behaviour.globalTimeLimit || Infinity) * 1000;
     this.startTimer();
@@ -464,6 +501,11 @@ export default class Main {
 
     this.updateNavigationButtons();
     this.updateStatusContainers();
+
+    if (isAudioOn) {
+      this.params.jukebox.unmuteAll();
+      this.params.jukebox.play('backgroundMusic');
+    }
   }
 
   /**

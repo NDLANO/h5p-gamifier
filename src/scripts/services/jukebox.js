@@ -1,0 +1,542 @@
+/** @constant {number} DEFAULT_FADE_TIME_MS Default fade time. */
+const DEFAULT_FADE_TIME_MS = 1000;
+
+/** @constant {object} STATES Stated of audios in jukebox. */
+export const STATES = {
+  buffering: 0,
+  stopped: 1,
+  queued: 2,
+  playing: 3,
+  paused: 4,
+};
+
+/* Service to handle sounds via WebAudio */
+export default class Jukebox {
+
+  /**
+   * @class
+   * @param {object} [callbacks] Callbacks.
+   * @param {function} [callbacks.onAudioContextReady] Callback for when audio context is ready.
+   */
+  constructor(callbacks = {}) {
+    this.callbacks = {};
+    this.callbacks.onAudioContextReady =
+      callbacks.onAudioContextReady || (() => {});
+
+    // Set up simple dispatcher for events
+    this.dispatcher = document.createElement('div');
+
+    // Handle audio was buffered successfully
+    this.dispatcher.addEventListener('bufferloaded', (event) => {
+      this.setAudioBuffer(event.detail);
+
+      if (this.queued.includes(event.detail.id)) {
+        this.removeFromQueue(event.detail.id);
+        this.play(event.detail.id);
+      }
+    });
+
+    this.audios = {}; // Key based audio storage.
+    this.queued = []; // Ids of queued audios.
+
+    // webkit prefix still required for older iOS versions.
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+
+    if (this.audioContext) {
+      return;
+    }
+
+    this.audioContext = new AudioContext();
+  }
+
+  /**
+   * Fill the jukebox with audios.
+   * @param {object} [params] Parameters.
+   */
+  fill(params = {}) {
+    for (const key in params) {
+      if (!params[key].src) {
+        continue;
+      }
+
+      this.add({
+        id: key,
+        src: params[key].src,
+        options: params[key].options ?? {},
+      });
+    }
+  }
+
+  /**
+   * Add audio.
+   * @param {object} [params] Parameters.
+   * @param {string} params.id Id of audio to add.
+   * @param {string} params.src URL to audio file.
+   * @param {object} [params.options] Options for the audio.
+   * @param {boolean} [params.options.loop] If true, loop the audio.
+   * @param {boolean} [params.options.muted] If true, be muted.
+   * @param {string} [params.options.groupId] Optional group id.
+   */
+  add(params = {}) {
+    if (!this.audioContext) {
+      return;
+    }
+
+    if (!params.id || !params.src) {
+      return;
+    }
+
+    this.audios[params.id] = {
+      loop: params.options.loop || false,
+      isMuted: params.options.muted || false,
+      volume: 100,
+      groupId: params.options.groupId || 'default',
+    };
+
+    this.bufferSound({ id: params.id, url: params.src });
+  }
+
+  /**
+   * Get audio's state.
+   * @param {string} id Id of audio.
+   * @returns {number|undefined} State id.
+   */
+  getState(id) {
+    if (!this.audios[id]) {
+      return;
+    }
+
+    return this.audios[id].state;
+  }
+
+  /**
+   * Set state for audio.
+   * @param {string} id Id of audio to set state for.
+   * @param {string|number} newState New state id.
+   */
+  setState(id, newState) {
+    if (typeof newState === 'string') {
+      newState = STATES[newState];
+    }
+
+    if (!Number.isInteger(newState) || !Object.values(STATES).includes(newState)) {
+      return; // Not a valid state
+    }
+
+    if (!this.audios[id] || this.audios[id].state === newState) {
+      return; // Same state or no audio
+    }
+
+    this.audios[id].state = newState;
+    this.dispatcher.dispatchEvent(
+      new CustomEvent('stateChanged', { detail: { id: id, state: newState } }),
+    );
+  }
+
+  /**
+   * Set audio buffer.
+   * @param {object} [params] Parameters.
+   * @param {string} params.id Id of audio to set buffer for.
+   * @param {object} params.buffer Audio buffer.
+   */
+  setAudioBuffer(params = {}) {
+    if (!this.audios[params.id]) {
+      return;
+    }
+
+    this.audios[params.id].buffer = params.buffer;
+    this.setState(params.id, STATES.stopped);
+  }
+
+  /**
+   * Buffer sound.
+   * @param {object} [params] Parameters.
+   * @param {string} params.id Id of audio.
+   * @param {string} params.url URL of audio to buffer.
+   */
+  async bufferSound(params = {}) {
+    const { id, url } = params || {};
+
+    if (!this.audios[id]) {
+      return;
+    }
+
+    if (this.audios[id].isLoading) {
+      return; // Already loading
+    }
+
+    this.setState(id, STATES.buffering);
+    this.audios[id].isLoading = true;
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+
+      // Safari-compatible decode fallback (promise or callback form)
+      const decode = this.audioContext.decodeAudioData.bind(this.audioContext);
+      const buffer = decode.length === 1 ?
+        await decode(arrayBuffer) :
+        await new Promise((resolve, reject) => decode(arrayBuffer, resolve, reject));
+
+      this.dispatcher.dispatchEvent(
+        new CustomEvent('bufferloaded', { detail: { id: id, buffer: buffer } }),
+      );
+    }
+    catch (error) {
+      this.handleRequestError(id, `Failed to load audio ${id}: ${error.message}`);
+    }
+    finally {
+      if (this.audios[id]) {
+        this.audios[id].isLoading = false;
+      }
+    }
+  }
+
+  /**
+   * Handle request errors.
+   * @param {string} id Id of audio to handle errors for.
+   * @param {string} errorMessage Error message.
+   */
+  handleRequestError(id, errorMessage) {
+    this.audios[id].isLoading = false;
+    this.setState(id, STATES.stopped);
+    console.error(errorMessage);
+  }
+
+  /**
+   * Play audio.
+   * @param {string} id Id of audio to play.
+   * @returns {boolean} True, if audio could be played. Else false.
+   */
+  play(id) {
+    if (!this.audios[id]) {
+      return false;
+    }
+
+    if (this.audios[id].isMuted) {
+      return false; // Muted
+    }
+
+    if (this.getState(id) === STATES.playing) {
+      return false; // Already playing
+    }
+
+    if (this.audioContext.state === 'suspended') {
+      this.audioContext.resume().then(() => {
+        this.play(id); // retry
+      }).catch((error) => {
+        console.warn('Failed to resume audio context:', error);
+      });
+
+      return false;
+    }
+
+    if (this.getState(id) === STATES.buffering) {
+      this.addToQueue(id);
+      return false;
+    }
+
+    const audio = this.audios[id];
+
+    const source = this.audioContext.createBufferSource();
+    source.buffer = audio.buffer;
+
+    // Add gain node
+    const gainNode = this.audioContext.createGain();
+    source
+      .connect(gainNode)
+      .connect(this.audioContext.destination);
+    this.audios[id].gainNode = gainNode;
+
+    // Set volume
+    gainNode.gain.value = audio.volume / 100;
+
+    // Set loop if necessary
+    source.loop = this.audios[id].loop;
+
+    audio.source = source;
+
+    audio.source.onended = () => {
+      this.stop(id);
+    };
+
+    audio.source.start();
+    this.setState(id, STATES.playing);
+
+    return true;
+  }
+
+  /**
+   * Add audio to play queue.
+   * @param {string} id of audio to add to play queue.
+   */
+  addToQueue(id) {
+    if (!this.queued.includes(id)) {
+      this.queued.push(id);
+    }
+  }
+
+  /**
+   * Remove audio to play queue.
+   * @param {string} id of audio to remove from play queue.
+   */
+  removeFromQueue(id) {
+    this.queued = this.queued.filter((entry) => entry !== id);
+  }
+
+  /**
+   * Stop audio.
+   * @param {string} id Id of audio to stop.
+   */
+  stop(id) {
+    if (!this.audios[id]) {
+      return;
+    }
+
+    this.removeFromQueue(id);
+
+    if (this.getState(id) !== STATES.playing) {
+      return;
+    }
+
+    const { source, gainNode } = this.audios[id];
+
+    if (source) {
+      source.onended = null; // Prevent calling stop again on ended
+      try {
+        source.stop();
+      }
+      catch (error) {}
+      source.disconnect();
+    }
+
+    gainNode?.disconnect();
+
+    this.audios[id].gainNode = null;
+    this.audios[id].source = null;
+
+    this.setState(id, STATES.stopped);
+  }
+
+  /**
+   * Stop audio group.
+   * @param {string} groupId GroupId of audios to stop.
+   */
+  stopGroup(groupId) {
+    if (!groupId) {
+      return;
+    }
+
+    for (const id in this.audios) {
+      if (this.audios[id].groupId === groupId) {
+        this.stop(id);
+      }
+    }
+  }
+
+  /**
+   * Stop all audios.
+   */
+  stopAll() {
+    for (const id in this.audios) {
+      this.stop(id);
+    }
+  }
+
+  /**
+   * Determine whether audio is playing.
+   * @param {string} id Id of audio to be checked.
+   * @returns {boolean} True, if audio is playing. Else false.
+   */
+  isPlaying(id) {
+    if (!this.audios[id]) {
+      return false;
+    }
+
+    return this.getState(id) === STATES.playing;
+  }
+
+  /**
+   * Fade audio.
+   * @param {string} id Id of audio to fade.
+   * @param {object} [params] Parameters.
+   * @param {string} params.type `in` to fade in, `out` to fade out.
+   * @param {number} [params.time] Time for fading in milliseconds.
+   */
+  fade(id, params = {}) {
+    if (!this.audios[id] || this.audios[id].isMuted) {
+      return;
+    }
+
+    if (params.type !== 'in' && params.type !== 'out') {
+      return;
+    }
+
+    const gainNode = this.audios[id].gainNode;
+    if (!gainNode) {
+      return;
+    }
+
+    // Sanitize time
+    const fadeTime = typeof params.time === 'number' && params.time > 0 ?
+      params.time / 1000 :
+      DEFAULT_FADE_TIME_MS / 1000;
+
+    const targetVolume = this.audios[id].volume / 100;
+    const targetGain = params.type === 'in' ? targetVolume : 0;
+    const currentTime = this.audioContext.currentTime;
+
+    gainNode.gain.cancelScheduledValues(currentTime);
+    gainNode.gain.setValueAtTime(gainNode.gain.value, currentTime);
+
+    gainNode.gain.linearRampToValueAtTime(targetGain, currentTime + fadeTime);
+  }
+
+  /**
+   * Get DOM element of audio.
+   * @param {string} id Id of audio to get DOM element for.
+   * @returns {HTMLElement|undefined} Audio element.
+   */
+  getDOM(id) {
+    if (!this.audios[id]) {
+      return;
+    }
+
+    return this.audios[id].dom;
+  }
+
+  /**
+   * Get audio ids.
+   * @returns {string[]} Audio ids.
+   */
+  getAudioIds() {
+    return Object.keys(this.audios);
+  }
+
+  /**
+   * Mute all audios.
+   */
+  muteAll() {
+    for (const id in this.audios) {
+      this.mute(id);
+    }
+  }
+
+  /**
+   * Mute.
+   * @param {string} id Id of sound to unmute.
+   */
+  mute(id) {
+    if (!this.audios[id]) {
+      return;
+    }
+
+    this.stop(id);
+    this.audios[id].isMuted = true;
+  }
+
+  /**
+   * Unmute all audios.
+   */
+  unmuteAll() {
+    for (const id in this.audios) {
+      this.unmute(id);
+    }
+  }
+
+  /**
+   * Unmute.
+   * @param {string} id Id of sound to unmute.
+   */
+  unmute(id) {
+    if (!this.audios[id]) {
+      return;
+    }
+
+    this.audios[id].isMuted = false;
+  }
+
+  /**
+   * Determine whether an audio is muted.
+   * @param {string} id Id of sound to check.
+   * @returns {boolean} True, if audio is muted. Else false.
+   */
+  isMuted(id) {
+    if (!this.audios[id]) {
+      return false;
+    }
+
+    return this.audios[id].isMuted;
+  }
+
+  /**
+   * Get volume.
+   * @param {string} id Id of sound to get volume for.
+   * @returns {number|undefined} Volume [0, 100] or undefined.
+   */
+  getVolume(id) {
+    if (!this.audios[id]) {
+      return;
+    }
+
+    return this.audios[id].volume;
+  }
+
+  /**
+   * Get volume of a group represented by first audio in group. May cause confusion, yes.
+   * @param {string} groupId Group id.
+   * @returns {number|undefined} Volume [0, 100] or undefined.
+   */
+  getVolumeGroup(groupId) {
+    for (const id in this.audios) {
+      if (this.audios[id].groupId === groupId) {
+        return this.getVolume(id);
+      }
+    }
+  }
+
+  /**
+   * Set volume.
+   * @param {string} id Id of sound to set volume for.
+   * @param {number} volume Volume [0, 100].
+   */
+  setVolume(id, volume = 100) {
+    if (!this.audios[id]) {
+      return;
+    }
+
+    volume = Math.max(0, Math.min(volume, 100));
+
+    this.audios[id].volume = volume;
+    if (this.audios[id].gainNode) {
+      this.audios[id].gainNode.gain.value = volume / 100;
+    }
+  }
+
+  /**
+   * Set volume for all audios in a group.
+   * @param {string} groupId Group id.
+   * @param {number} volume Volume [0, 100].
+   */
+  setVolumeGroup(groupId, volume) {
+    for (const id in this.audios) {
+      if (this.audios[id].groupId === groupId) {
+        this.setVolume(id, volume);
+      }
+    }
+  }
+
+  /**
+   * Set volume for all audios.
+   * @param {number} volume Volume [0, 100].
+   */
+  setVolumeAll(volume) {
+    for (const id in this.audios) {
+      this.setVolume(id, volume);
+    }
+  }
+}
