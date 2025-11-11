@@ -22,8 +22,7 @@ export default class FooterBar {
       onClickButtonRight: () => {}
     }, callbacks);
 
-    this.buttons = {};
-    this.containers = {};
+    this.buttons = new Map();
 
     // Build DOM
     this.dom = document.createElement('div');
@@ -37,7 +36,7 @@ export default class FooterBar {
       this.handleKeydown(event);
     });
 
-    this.buttons.left = new Button(
+    this.buttons.set('left', new Button(
       {
         a11y: {
           active: this.params.dictionary.get('a11y.previousContent'),
@@ -55,9 +54,9 @@ export default class FooterBar {
           this.callbacks.onClickButtonLeft();
         }
       }
-    );
+    ));
 
-    this.buttons.right = new Button(
+    this.buttons.set('right', new Button(
       {
         a11y: {
           active: this.params.dictionary.get('a11y.nextContent'),
@@ -75,15 +74,15 @@ export default class FooterBar {
           this.callbacks.onClickButtonRight();
         }
       }
-    );
+    ));
 
     this.roundAnnouncer = document.createElement('div');
     this.roundAnnouncer.classList.add('h5p-gamifier-page-announcer');
 
-    this.dom.appendChild(this.buttons.left.getDOM());
+    this.dom.appendChild(this.buttons.get('left').getDOM());
     this.dom.appendChild(this.roundAnnouncer);
     this.dom.append(this.params.statusContainers.getDOM());
-    this.dom.appendChild(this.buttons.right.getDOM());
+    this.dom.appendChild(this.buttons.get('right').getDOM());
 
     this.setButtonTabbable('left');
   }
@@ -113,15 +112,15 @@ export default class FooterBar {
   setButtonTabbable(name) {
     this.currentTabbableButton = name;
 
-    for (let key in this.buttons) {
+    this.buttons.forEach((button, key) => {
       if (key === name) {
-        this.buttons[key]?.setTabbable(true);
-        this.buttons[key]?.focus();
+        button.setTabbable(true);
+        button.focus();
       }
       else {
-        this.buttons[key]?.setTabbable(false);
+        button.setTabbable(false);
       }
-    }
+    });
   }
 
   /**
@@ -164,11 +163,7 @@ export default class FooterBar {
    * @param {string} id Button id.
    */
   enableButton(id = '') {
-    if (!this.buttons[id]) {
-      return; // Button not available
-    }
-
-    this.buttons[id].enable();
+    this.buttons.get(id)?.enable();
   }
 
   /**
@@ -176,11 +171,7 @@ export default class FooterBar {
    * @param {string} id Button id.
    */
   disableButton(id = '') {
-    if (!this.buttons[id]) {
-      return; // Button not available
-    }
-
-    this.buttons[id].disable();
+    this.buttons.get(id)?.disable();
   }
 
   /**
@@ -188,11 +179,7 @@ export default class FooterBar {
    * @param {string} id Button id.
    */
   showButton(id = '') {
-    if (!this.buttons[id]) {
-      return; // Button not available
-    }
-
-    this.buttons[id].show();
+    this.buttons.get(id)?.show();
   }
 
   /**
@@ -200,11 +187,7 @@ export default class FooterBar {
    * @param {string} id Button id.
    */
   hideButton(id = '') {
-    if (!this.buttons[id]) {
-      return; // Button not available
-    }
-
-    this.buttons[id].hide();
+    this.buttons.get(id)?.hide();
   }
 
   /**
@@ -212,10 +195,6 @@ export default class FooterBar {
    * @param {string} id Button id.
    */
   focus(id = '') {
-    if (!this.buttons[id]) {
-      return; // Button not available
-    }
-
-    this.buttons[id].focus();
+    this.buttons.get(id)?.focus();
   }
 }

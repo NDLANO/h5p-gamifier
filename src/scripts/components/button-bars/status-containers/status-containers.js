@@ -15,7 +15,7 @@ export default class StatusContainers {
     this.callbacks = Util.extend({
     }, callbacks);
 
-    this.containers = {};
+    this.containers = new Map();
 
     this.dom = document.createElement('div');
     this.dom.classList.add('status-containers');
@@ -52,8 +52,9 @@ export default class StatusContainers {
       return;
     }
 
-    this.containers[params.id] = new StatusContainer(params);
-    this.dom.append(this.containers[params.id].getDOM());
+    const container = new StatusContainer(params);
+    this.containers.set(params.id, container);
+    this.dom.append(container.getDOM());
   }
 
   /**
@@ -61,11 +62,7 @@ export default class StatusContainers {
    * @param {string} id Id of container to show.
    */
   showContainer(id) {
-    if (!this.containers[id]) {
-      return;
-    }
-
-    this.containers[id].show();
+    this.containers.get(id)?.show();
   }
 
   /**
@@ -73,11 +70,7 @@ export default class StatusContainers {
    * @param {string} id Id of container to hide.
    */
   hideContainer(id) {
-    if (!this.containers[id]) {
-      return;
-    }
-
-    this.containers[id].hide();
+    this.containers.get(id)?.hide();
   }
 
   /**
@@ -86,11 +79,7 @@ export default class StatusContainers {
    * @param {object} params Parameters to set.
    */
   setStatus(id, params = {}) {
-    if (!this.containers[id]) {
-      return;
-    }
-
-    this.containers[id].setStatus(params);
+    this.containers.get(id)?.setStatus(params);
   }
 
   /**
@@ -99,10 +88,6 @@ export default class StatusContainers {
    * @param {string|null} animationName Animation name, null to stop animation.
    */
   animate(id, animationName) {
-    if (!this.containers[id]) {
-      return;
-    }
-
-    this.containers[id].animate(animationName);
+    this.containers.get(id)?.animate(animationName);
   }
 }

@@ -19,7 +19,7 @@ export default class HeaderBar {
       onClickButtonFullscreen: () => {}
     }, callbacks);
 
-    this.buttons = {};
+    this.buttons = new Map();
 
     // Build DOM
     this.dom = document.createElement('div');
@@ -39,7 +39,7 @@ export default class HeaderBar {
     this.dom.append(buttonsContainer);
 
     if (this.params.hasAudio) {
-      this.buttons.audio = new Button(
+      const audioButton = new Button(
         {
           a11y: {
             active: this.params.dictionary.get('a11y.mute'),
@@ -58,11 +58,14 @@ export default class HeaderBar {
           }
         }
       );
-      buttonsContainer.append(this.buttons.audio.getDOM());
+
+      this.buttons.set('audio', audioButton);
+
+      buttonsContainer.append(audioButton.getDOM());
     }
 
     if (this.params.hasFullscreen) {
-      this.buttons.fullscreen = new Button(
+      const fullscreenButton = new Button(
         {
           a11y: {
             active: this.params.dictionary.get('a11y.TODO'),
@@ -81,10 +84,11 @@ export default class HeaderBar {
         }
       );
 
-      buttonsContainer.append(this.buttons.fullscreen.getDOM());
+      this.buttons.set('fullscreen', fullscreenButton);
+      buttonsContainer.append(this.buttons.get('fullscreen').getDOM());
     }
 
-    this.setButtonTabbable(Object.keys(this.buttons)[0]);
+    this.setButtonTabbable(this.buttons.keys()[0]);
   }
 
   /**
@@ -100,21 +104,21 @@ export default class HeaderBar {
    * @param {string} name Name of the button.
    */
   setButtonTabbable(name) {
-    if (!this.buttons[name]) {
+    if (!this.buttons.has(name)) {
       return; // Button not available
     }
 
     this.currentTabbableButton = name;
 
-    for (let key in this.buttons) {
+    this.buttons.foreEach((button, key) => {
       if (key === name) {
-        this.buttons[key]?.setTabbable(true);
-        this.buttons[key]?.focus();
+        button.setTabbable(true);
+        button.focus();
       }
       else {
-        this.buttons[key]?.setTabbable(false);
+        button.setTabbable(false);
       }
-    }
+    });
   }
 
   /**
@@ -157,11 +161,7 @@ export default class HeaderBar {
    * @param {string} id Button id.
    */
   enableButton(id = '') {
-    if (!this.buttons[id]) {
-      return; // Button not available
-    }
-
-    this.buttons[id].enable();
+    this.buttons.get(id)?.enable();
   }
 
   /**
@@ -169,11 +169,7 @@ export default class HeaderBar {
    * @param {string} id Button id.
    */
   disableButton(id = '') {
-    if (!this.buttons[id]) {
-      return; // Button not available
-    }
-
-    this.buttons[id].disable();
+    this.buttons.get(id)?.disable();
   }
 
   /**
@@ -181,11 +177,7 @@ export default class HeaderBar {
    * @param {string} id Button id.
    */
   showButton(id = '') {
-    if (!this.buttons[id]) {
-      return; // Button not available
-    }
-
-    this.buttons[id].show();
+    this.buttons.get(id)?.show();
   }
 
   /**
@@ -193,11 +185,7 @@ export default class HeaderBar {
    * @param {string} id Button id.
    */
   hideButton(id = '') {
-    if (!this.buttons[id]) {
-      return; // Button not available
-    }
-
-    this.buttons[id].hide();
+    this.buttons.get(id)?.hide();
   }
 
   /**
@@ -205,10 +193,6 @@ export default class HeaderBar {
    * @param {string} id Button id.
    */
   focus(id = '') {
-    if (!this.buttons[id]) {
-      return; // Button not available
-    }
-
-    this.buttons[id].focus();
+    this.buttons.get(id)?.focus();
   }
 }
