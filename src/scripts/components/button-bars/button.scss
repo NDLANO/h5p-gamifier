@@ -42,6 +42,10 @@
     content: var(--icon-fontawesome-volume-high);
   }
 
+  &.h5p-gamifier-button-settings::before {
+    content: var(--icon-fontawesome-cog);
+  }
+
   &.h5p-gamifier-button-fullscreen::before {
     content: var(--icon-fontawesome-expand);
   }

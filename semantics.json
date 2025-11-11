@@ -175,6 +175,24 @@
         "type": "text",
         "label": "Time expired for global",
         "default": "You ran out of time for this content!"
+      },
+      {
+        "name": "settings",
+        "type": "text",
+        "label": "Settings",
+        "default": "Settings"
+      },
+      {
+        "name": "volumeMusic",
+        "type": "text",
+        "label": "Volume of music",
+        "default": "Volume of music"
+      },
+      {
+        "name": "volumeSFX",
+        "type": "text",
+        "label": "Volume of sound effects",
+        "default": "Volume of sound effects"
       }
     ]
   },

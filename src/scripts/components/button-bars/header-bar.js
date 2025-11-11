@@ -16,6 +16,7 @@ export default class HeaderBar {
 
     this.callbacks = Util.extend({
       onClickButtonAudio: () => {},
+      onClickButtonSettings: () => {},
       onClickButtonFullscreen: () => {}
     }, callbacks);
 
@@ -58,10 +59,29 @@ export default class HeaderBar {
           }
         }
       );
-
       this.buttons.set('audio', audioButton);
-
       buttonsContainer.append(audioButton.getDOM());
+
+      const settingsButton = new Button(
+        {
+          a11y: {
+            active: this.params.dictionary.get('a11y.settings'),
+          },
+          classes: [
+            'h5p-gamifier-button',
+            'h5p-gamifier-button-settings',
+            'regular'
+          ],
+          type: 'pulse',
+        },
+        {
+          onClick: () => {
+            this.callbacks.onClickButtonSettings();
+          }
+        }
+      );
+      this.buttons.set('settings', settingsButton);
+      buttonsContainer.append(this.buttons.get('settings').getDOM());
     }
 
     if (this.params.hasFullscreen) {

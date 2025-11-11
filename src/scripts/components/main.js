@@ -4,6 +4,7 @@ import Timer from '@services/timer.js';
 import HeaderBar from '@components/button-bars/header-bar.js';
 import FooterBar from '@components/button-bars/footer-bar.js';
 import Page from '@components/page/page.js';
+import SettingsDialog from '@components/overlay-dialogs/settings-dialog.js';
 import StatusContainers from '@components/button-bars/status-containers/status-containers.js';
 import './main.scss';
 
@@ -119,6 +120,9 @@ export default class Main {
         onClickButtonAudio: (on) => {
           this.toggleAudio(on);
         },
+        onClickButtonSettings: () => {
+          this.settingsDialog.show();
+        },
         onClickButtonFullscreen: () => {
           console.warn('Fullscreen button clicked');
         }
@@ -143,6 +147,39 @@ export default class Main {
       }
     );
     this.dom.append(this.buttonBarFooter.getDOM());
+
+
+    this.settingsDialog = new SettingsDialog(
+      {
+        dictionary: this.params.dictionary,
+        globals: this.params.globals,
+        cssMainSelector: 'settings',
+        values: {
+          volumeMusic: this.params.jukebox.getVolumeGroup('background'),
+          volumeSFX: this.params.jukebox.getVolumeGroup('default'),
+        },
+      },
+      {
+        onClosed: () => {
+          this.settingsDialog.hide({ animate: true }, () => {
+            this.params.globals.get('resize')();
+          });
+        },
+        onOpenAnimationEnded: () => {
+          this.params.globals.get('resize')();
+        },
+        onValueChanged: (id, value) => {
+          if (id === 'volumeMusic') {
+            this.params.jukebox.setVolumeGroup('background', value);
+          }
+          else if (id === 'volumeSFX') {
+            this.params.jukebox.setVolumeGroup('default', value);
+          }
+        },
+      },
+    );
+    this.settingsDialog.hide();
+    this.dom.append(this.settingsDialog.getDOM());
 
     // Screenreader for polite screen reading
     document.body.append(Screenreader.getDOM());

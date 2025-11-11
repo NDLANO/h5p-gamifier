@@ -14,9 +14,13 @@ html {
   --color-primary: rgb(26, 115, 217);
   --color-primary-5: rgba(26, 115, 217, .05);
   --color-primary-10: rgba(26, 115, 217, .1);
+  --color-primary-15: rgba(26, 115, 217, .15);
   --color-primary-25: rgba(26, 115, 217, .25);
   --color-primary-90: rgba(26, 115, 217, .9);
   --color-primary-95: rgba(26, 115, 217, .95);
+
+  --color-primary-dark: rgb(23, 104, 196);
+  --color-primary-dark-80: rgb(23 104 196 / 80%);
 
   /* Icons */
   --icon-fontawesome-heart: '\f004';
@@ -29,4 +33,6 @@ html {
   --icon-fontawesome-expand: '\f065';
   --icon-fontawesome-chevron-left: '\f053';
   --icon-fontawesome-chevron-right: '\f054';
+  --icon-fontawesome-xmark: '\f00d';
+  --icon-fontawesome-cog: '\f013';
 }
