@@ -76,35 +76,50 @@
             "type": "audio",
             "label": "Go previous/next content",
             "description": "Sound played when navigating to the previous or next content.",
-            "optional": true
+            "optional": true,
+            "widgetExtensions": [
+              "GameSounds"
+            ]
           },
           {
             "name": "lostLife",
             "type": "audio",
             "label": "Lost a life",
             "description": "Will be played when the user loses a life.",
-            "optional": true
+            "optional": true,
+            "widgetExtensions": [
+              "GameSounds"
+            ]
           },
           {
             "name": "attemptsExceeded",
             "type": "audio",
             "label": "Attempts exceeded",
             "description": "Will be played when the user exceeds the maximum number of attempts for an exercise.",
-            "optional": true
+            "optional": true,
+            "widgetExtensions": [
+              "GameSounds"
+            ]
           },
           {
             "name": "timeExpired",
             "type": "audio",
             "label": "Time expired",
             "description": "Sound played when the time is up for one exercise.",
-            "optional": true
+            "optional": true,
+            "widgetExtensions": [
+              "GameSounds"
+            ]
           },
           {
             "name": "timeExpiredTotal",
             "type": "audio",
             "label": "Time expired total",
             "description": "Sound played when the time is up for all exercises.",
-            "optional": true
+            "optional": true,
+            "widgetExtensions": [
+              "GameSounds"
+            ]
           }
         ]
       }
