@@ -60,11 +60,21 @@ export default class Main {
             this.pages[index].showTimeExpired(this.params.dictionary.get('l10n.timeExpiredExercise'));
           },
           onScoreChanged: (index, values = {}) => {
+            let resultSoundId;
+
             if (typeof values.before === 'number' && typeof values.after === 'number') {
               const scoreChange = values.after - values.before;
               if (scoreChange < 0) {
-                this.params.jukebox.play('lostLife');
+                resultSoundId = 'lostLife';
               }
+            }
+
+            if (!resultSoundId) {
+              resultSoundId = values.success ? 'correctAnswer' : 'wrongAnswer';
+            }
+
+            if (resultSoundId) {
+              this.params.jukebox.play(resultSoundId);
             }
 
             this.updateExerciseAttempts();
@@ -160,7 +170,11 @@ export default class Main {
         },
       },
       {
+        onOpened: () => {
+          this.params.jukebox.play('dialogOpened');
+        },
         onClosed: () => {
+          this.params.jukebox.play('dialogClosed');
           this.settingsDialog.hide({ animate: true }, () => {
             this.params.globals.get('resize')();
           });
@@ -190,6 +204,7 @@ export default class Main {
         onTick: () => {
           this.timeLeft = this.timer.getTime();
           this.updateGlobalTime();
+          this.checkTimeWarningGlobal();
         },
         onExpired: () => {
           this.handleGlobalTimeExpired();
@@ -340,6 +355,27 @@ export default class Main {
 
     this.params.jukebox.play('goto');
     this.callbacks.onProgressed(this.currentPageIndex);
+  }
+
+  /**
+   * Check and play time warning global sound.
+   */
+  checkTimeWarningGlobal() {
+    if (this.timeWarningGlobalWasPlayed) {
+      return;
+    }
+
+    const timeWarningGlobal = this.params.globals.get('params').behaviour.timeWarningGlobal;
+    if (typeof timeWarningGlobal !== 'number') {
+      return;
+    }
+
+    if (this.timeLeft > timeWarningGlobal * 1000) {
+      return;
+    }
+
+    this.timeWarningGlobalWasPlayed = true;
+    this.params.jukebox.play('timeWarningGlobal');
   }
 
   handleGlobalTimeExpired() {
@@ -524,6 +560,8 @@ export default class Main {
     if (isAudioOn) {
       this.params.jukebox.muteAll();
     }
+
+    this.timeWarningGlobalWasPlayed = false;
 
     this.timer?.stop();
     this.timeLeft = (this.params.globals.get('params').behaviour.globalTimeLimit || Infinity) * 1000;

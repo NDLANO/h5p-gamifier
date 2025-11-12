@@ -15,12 +15,16 @@ export default class OverlayDialog {
    * @param {object} [params] Parameters.
    * @param {boolean} [params.animate] If true, animate.
    * @param {object} [callbacks] Callbacks.
+   * @param {function} [callbacks.onOpened] Callback when overlay opened.
    * @param {function} [callbacks.onClosed] Callback when overlay closed.
+   * @param {function} [callbacks.onOpenAnimationEnded] Callback when open animation ended.
+   * @param {function} [callbacks.onCloseAnimationEnded] Callback when close animation ended.
    */
   constructor(params = {}, callbacks = {}) {
     this.params = Util.extend({}, params);
 
     this.callbacks = Util.extend({
+      onOpened: () => {},
       onClosed: () => {},
       onOpenAnimationEnded: () => {},
       onCloseAnimationEnded: () => {},
@@ -100,6 +104,7 @@ export default class OverlayDialog {
    * @param {boolean} [params.isShowingSolutions] If true, showing solutions.
    */
   show(params = {}) {
+    this.callbacks.onOpened();
     this.dom.classList.remove('display-none');
 
     // Wait to allow DOM to progress

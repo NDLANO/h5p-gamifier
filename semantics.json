@@ -82,6 +82,26 @@
             ]
           },
           {
+            "name": "correctAnswer",
+            "type": "audio",
+            "label": "Correct answer",
+            "description": "Will be played when the user answers correctly.",
+            "optional": true,
+            "widgetExtensions": [
+              "GameSounds"
+            ]
+          },
+          {
+            "name": "wrongAnswer",
+            "type": "audio",
+            "label": "Wrong answer",
+            "description": "Will be played when the user answers incorrectly.",
+            "optional": true,
+            "widgetExtensions": [
+              "GameSounds"
+            ]
+          },
+          {
             "name": "lostLife",
             "type": "audio",
             "label": "Lost a life",
@@ -96,6 +116,16 @@
             "type": "audio",
             "label": "Attempts exceeded",
             "description": "Will be played when the user exceeds the maximum number of attempts for an exercise.",
+            "optional": true,
+            "widgetExtensions": [
+              "GameSounds"
+            ]
+          },
+          {
+            "name": "timeWarningGlobal",
+            "type": "audio",
+            "label": "Global time warning",
+            "description": "Sound played when the global time is about to expire.",
             "optional": true,
             "widgetExtensions": [
               "GameSounds"
@@ -120,6 +150,26 @@
             "widgetExtensions": [
               "GameSounds"
             ]
+          },
+          {
+            "name": "dialogOpened",
+            "type": "audio",
+            "label": "Dialog opened",
+            "description": "Sound played when a dialog is opened.",
+            "optional": true,
+            "widgetExtensions": [
+              "GameSounds"
+            ]
+          },
+          {
+            "name": "dialogClosed",
+            "type": "audio",
+            "label": "Dialog closed",
+            "description": "Sound played when a dialog is closed.",
+            "optional": true,
+            "widgetExtensions": [
+              "GameSounds"
+            ]
           }
         ]
       }
@@ -136,6 +186,14 @@
         "type": "number",
         "label": "Global time limit",
         "description": "Optional global time limit in seconds. If a user exceeds this time, all the exercises cannot be edited anymore.",
+        "min": 1,
+        "optional": true
+      },
+      {
+        "name": "timeWarningGlobal",
+        "type": "number",
+        "label": "Global time warning",
+        "description": "Optional time in seconds before the global time expires to show a warning.",
         "min": 1,
         "optional": true
       },

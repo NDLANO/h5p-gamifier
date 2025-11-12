@@ -83,7 +83,14 @@ export default class Page {
             this.attemptsLeft--;
           }
 
-          this.callbacks.onScoreChanged(this.params.index, { before: before, after: this.attemptsLeft });
+          this.callbacks.onScoreChanged(
+            this.params.index,
+            {
+              before: before,
+              after: this.attemptsLeft,
+              success: event.success === true
+            }
+          );
 
           if (this.attemptsLeft <= 0) {
             this.callbacks.onAttemptsExceeded(this.params.index);
