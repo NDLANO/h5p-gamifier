@@ -492,7 +492,7 @@ export default class Main {
    */
   updateStatusContainers() {
     this.updateExerciseTime();
-    this.updateExerciseAttempts();
+    this.updateExerciseAttempts({ skipAnimation: true });
     this.updateScoreDisplay();
   }
 
@@ -501,16 +501,42 @@ export default class Main {
     this.statusContainersExercise.setStatus('time', { value: currentPage.getTimeLeftTimecode() });
   }
 
+  /**
+   * Update global time.
+   */
   updateGlobalTime() {
     this.statusContainersGlobal.setStatus('time', { value: Timer.toTimecode(this.timeLeft) });
+    const isUpperTimeHalf = Math.round(this.timeLeft / 1000) === Math.ceil(this.timeLeft / 1000);
+    if (this.timeWarningGlobalWasPlayed && isUpperTimeHalf) {
+      this.statusContainersGlobal.animate('time', 'pulse');
+    }
   }
 
-  updateExerciseAttempts() {
-    const currentPage = this.pages[this.currentPageIndex];
-    this.statusContainersExercise.setStatus('attempts', { value: currentPage.getAttemptsLeft() });
+  /**
+   * Update exercise attempts.
+   * @param {object} [params] Parameters.
+   * @param {boolean} [params.skipAnimation] If true, skip animation.
+   */
+  updateExerciseAttempts(params = {}) {
+    const currentAttemptsLeft = this.pages[this.currentPageIndex].getAttemptsLeft();
+
+    if (!params.skipAnimation) {
+      const oldStatus = this.statusContainersExercise.getStatus('attempts');
+
+      if (oldStatus.value !== Infinity && oldStatus.value > currentAttemptsLeft) {
+        this.statusContainersExercise.animate('attempts', 'bounce-negative');
+      }
+    }
+
+    this.statusContainersExercise.setStatus('attempts', { value: currentAttemptsLeft });
   }
 
   updateScoreDisplay() {
+    const oldStatus = this.statusContainersGlobal.getStatus('score');
+    if (oldStatus.value !== this.getScore()) {
+      this.statusContainersGlobal.animate('score', 'tada');
+    }
+
     this.statusContainersGlobal.setStatus('score', {
       value: this.getScore(),
       maxValue: this.getMaxScore()

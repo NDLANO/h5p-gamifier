@@ -1,4 +1,5 @@
 import Util from '@services/util.js';
+import { animate } from '@services/animate.js';
 import './content-replacer.scss';
 
 const ICON_CLASS = 'h5p-content-replacer-icon';
@@ -63,5 +64,9 @@ export default class ContentReplacer {
 
   hide() {
     this.dom.classList.add('display-none');
+  }
+
+  animate() {
+    animate(this.dom, 'wobble');
   }
 }

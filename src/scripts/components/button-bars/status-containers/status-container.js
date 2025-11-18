@@ -1,10 +1,7 @@
 import { animate } from '@services/animate.js';
-import Util from '@services/util.js';
+import Util, { DISPLAY_INFINITY } from '@services/util.js';
 import Scorebar from './scorebar.js';
 import './status-container.scss';
-
-/** @constant {string} DISPLAY_INFINITY Default value for the status container */
-const DISPLAY_INFINITY = '\u221e'; // Infinity symbol
 
 /** Class representing a status container */
 export default class StatusContainer {
@@ -90,6 +87,29 @@ export default class StatusContainer {
     if ((params.maxValue ?? null) !== null && this.maxValue) {
       this.maxValue.innerText = params.maxValue;
     }
+  }
+
+  /**
+   * Get status.
+   * @returns {object} Status.
+   */
+  getStatus() {
+    const valueText = this.value?.innerText?.trim() || '';
+
+    // Handle infinity symbol
+    if (valueText === DISPLAY_INFINITY || valueText === 'Infinity') {
+      return {
+        value: Infinity,
+        ...(this.maxValue && { maxValue: Util.parseNumericValue(this.maxValue.innerText) })
+      };
+    }
+
+    const output = { value: Util.parseNumericValue(valueText) };
+    if (this.maxValue?.innerText) {
+      output.maxValue = Util.parseNumericValue(this.maxValue.innerText);
+    }
+
+    return output;
   }
 
   /**

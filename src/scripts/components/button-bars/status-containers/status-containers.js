@@ -83,6 +83,15 @@ export default class StatusContainers {
   }
 
   /**
+   * Get container status.
+   * @param {string} id Id of container to get status for.
+   * @returns {object} Status of container, null if not found.
+   */
+  getStatus(id) {
+    return this.containers.get(id)?.getStatus() ?? {};
+  }
+
+  /**
    * Animate container.
    * @param {string} id Container id.
    * @param {string|null} animationName Animation name, null to stop animation.

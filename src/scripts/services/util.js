@@ -1,5 +1,8 @@
 import { decode } from 'he';
 
+/** @constant {string} DISPLAY_INFINITY Default value for the status container */
+export const DISPLAY_INFINITY = '\u221e'; // Infinity symbol
+
 /** Class for utility functions */
 export default class Util {
   /**
@@ -108,5 +111,29 @@ export default class Util {
     text = div.textContent || div.innerText || '';
 
     return text;
+  }
+
+  /**
+   * Parse numerical value from text.
+   * @param {string} text Text to parse.
+   * @param {number} fallback Fallback value.
+   * @returns {number} Parsed numerical value, or fallback.
+   */
+  static parseNumericValue(text, fallback = 0) {
+    if (typeof text !== 'string') {
+      return fallback;
+    }
+
+    const trimmed = text.trim();
+
+    if (trimmed === '') {
+      return fallback;
+    }
+    else if (trimmed === DISPLAY_INFINITY) {
+      return Infinity;
+    }
+
+    const number = parseFloat(trimmed);
+    return Number.isFinite(number) ? number : fallback;
   }
 }
