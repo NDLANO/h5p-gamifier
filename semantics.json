@@ -176,6 +176,27 @@
     ]
   },
   {
+    "name": "visuals",
+    "type": "group",
+    "importance": "low",
+    "label": "Visual settings",
+    "fields": [
+      {
+        "name": "animate",
+        "type": "boolean",
+        "label": "Animate elements",
+        "description": "Enable animations for various elements. Users' explicit wish to reduce motion (e.g., via browser settings) will be respected automatically regardless of this setting.",
+        "default": true
+      },
+      {
+        "name": "dummy",
+        "type": "boolean",
+        "label": "Dummy",
+        "widget": "none"
+      }
+    ]
+  },
+  {
     "name": "behaviour",
     "type": "group",
     "importance": "low",

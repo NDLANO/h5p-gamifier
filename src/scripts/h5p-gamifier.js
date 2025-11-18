@@ -19,6 +19,7 @@ export default class Gamifier extends H5P.EventDispatcher {
 
     const defaults = Util.extend({
       audio: {},
+      visuals: {},
       behaviour: {
         enableRetry: false, // @see {@link https://h5p.org/documentation/developers/contracts#guides-header-9}
         enableSolutionsButton: false, // @see {@link https://h5p.org/documentation/developers/contracts#guides-header-8}

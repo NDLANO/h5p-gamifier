@@ -165,7 +165,9 @@ export default class Page {
       text: text
     });
     this.contentReplacer.show();
-    this.contentReplacer.animate();
+    if (this.params.globals.get('params').visuals?.animate) {
+      this.contentReplacer.animate();
+    }
 
     this.params.globals.get('mainInstance').trigger('resize');
   }
@@ -178,7 +180,10 @@ export default class Page {
       text: 'You have exceeded the maximum number of attempts for this exercise.',
     });
     this.contentReplacer.show();
-    this.contentReplacer.animate();
+
+    if (this.params.globals.get('params').visuals?.animate) {
+      this.contentReplacer.animate();
+    }
 
     this.params.globals.get('mainInstance').trigger('resize');
   }

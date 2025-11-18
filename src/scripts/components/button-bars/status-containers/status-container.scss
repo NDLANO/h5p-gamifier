@@ -25,7 +25,7 @@
     animation: pulse var(--pulse-duration) ease-in-out;
   }
 
-  &.animate-head-shake-negative {
+  &.animate-head-shake {
     --head-shake-duration: 1s;
 
     animation: head-shake var(--head-shake-duration) ease-in-out, color-negative var(--head-shake-duration);

@@ -29,21 +29,17 @@ export const animate = (element, animationName = '', callback = () => {}) => {
   const className = `animate-${animationName}`;
 
   const listener = (event) => {
-    if (
-      event.animationName !== animationName &&
-      event.animationName !== undefined // Clearing animation.
-    ) {
+    if (event.animationName !== animationName && event.animationName !== undefined) {
       return;
     }
 
     element.classList.remove('animate');
     element.classList.remove(className);
-    element.removeEventListener('animationend', listener);
 
     callback();
   };
 
-  element.addEventListener('animationend', listener);
+  element.addEventListener('animationend', listener, { once: true });
 
   element.classList.add('animate');
   element.classList.add(className);

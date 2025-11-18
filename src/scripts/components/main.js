@@ -507,7 +507,7 @@ export default class Main {
   updateGlobalTime() {
     this.statusContainersGlobal.setStatus('time', { value: Timer.toTimecode(this.timeLeft) });
     const isUpperTimeHalf = Math.round(this.timeLeft / 1000) === Math.ceil(this.timeLeft / 1000);
-    if (this.timeWarningGlobalWasPlayed && isUpperTimeHalf) {
+    if (this.timeWarningGlobalWasPlayed && isUpperTimeHalf && this.params.globals.get('params').visuals?.animate) {
       this.statusContainersGlobal.animate('time', 'pulse');
     }
   }
@@ -523,8 +523,8 @@ export default class Main {
     if (!params.skipAnimation) {
       const oldStatus = this.statusContainersExercise.getStatus('attempts');
 
-      if (oldStatus.value !== Infinity && oldStatus.value > currentAttemptsLeft) {
-        this.statusContainersExercise.animate('attempts', 'head-shake-negative');
+      if (oldStatus.value !== Infinity && oldStatus.value > currentAttemptsLeft && this.params.globals.get('params').visuals?.animate) {
+        this.statusContainersExercise.animate('attempts', 'head-shake');
       }
     }
 
@@ -533,7 +533,7 @@ export default class Main {
 
   updateScoreDisplay() {
     const oldStatus = this.statusContainersGlobal.getStatus('score');
-    if (oldStatus.value !== this.getScore()) {
+    if (oldStatus.value !== this.getScore() && this.params.globals.get('params').visuals?.animate) {
       this.statusContainersGlobal.animate('score', 'tada');
     }
 
