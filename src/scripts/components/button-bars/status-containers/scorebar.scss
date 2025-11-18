@@ -1,17 +1,23 @@
-  .h5p-gamifier-score-bar {
-    --fill-percentage: 0%;
+.h5p-gamifier-score-bar {
+  --fill-percentage: 0%;
 
-    background-color: var(--color-primary-5);
-    border-radius: 0.25rem;
-    box-sizing: border-box;
-    height: 0.5rem;
-    overflow: hidden;
-    width: 5rem;
+  background-color: var(--color-primary-5);
+  border-radius: 0.25rem;
+  box-sizing: border-box;
+  height: 0.5rem;
+  overflow: hidden;
+  width: 5rem;
 
-    .h5p-gamifier-score-bar-fill {
-      background-color: var(--color-primary);
-      height: 100%;
-      transition: width 0.3s ease-in-out;
-      width: var(--fill-percentage);
-    }
+  .h5p-gamifier-score-bar-fill {
+    background-color: var(--color-primary);
+    height: 100%;
+    transition: width 0.3s ease-in-out;
+    width: var(--fill-percentage);
   }
+}
+
+@container h5p-gamifier-main (width < 20rem) {
+  .h5p-gamifier-score-bar {
+    display: none;
+  }
+}
