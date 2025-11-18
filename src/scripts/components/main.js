@@ -524,7 +524,7 @@ export default class Main {
       const oldStatus = this.statusContainersExercise.getStatus('attempts');
 
       if (oldStatus.value !== Infinity && oldStatus.value > currentAttemptsLeft) {
-        this.statusContainersExercise.animate('attempts', 'bounce-negative');
+        this.statusContainersExercise.animate('attempts', 'head-shake-negative');
       }
     }
 
