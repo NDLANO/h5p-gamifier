@@ -1,5 +1,6 @@
 import { animate } from '@services/animate.js';
 import Util from '@services/util.js';
+import Scorebar from './scorebar.js';
 import './status-container.scss';
 
 /** @constant {string} DISPLAY_INFINITY Default value for the status container */
@@ -24,6 +25,14 @@ export default class StatusContainer {
     this.dom = document.createElement('div');
     this.dom.classList.add('status-container');
     this.dom.classList.add(`status-container-${params.id}`);
+
+    if (params.hasScorebar) {
+      this.scorebar = new Scorebar({
+        dictionary: this.params.dictionary,
+        maxValue: params.maxValue,
+      });
+      this.dom.append(this.scorebar.getDOM());
+    }
 
     const values = document.createElement('div');
     values.classList.add('status-container-values');
@@ -72,8 +81,10 @@ export default class StatusContainer {
         params.value = DISPLAY_INFINITY;
         this.value.innerText = params.value.toString();
       }
-
-      this.value.innerText = params.value;
+      else {
+        this.value.innerText = params.value;
+        this.scorebar?.setValue(params.value,  params.maxValue);
+      }
     }
 
     if ((params.maxValue ?? null) !== null && this.maxValue) {

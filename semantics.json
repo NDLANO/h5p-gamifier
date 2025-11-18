@@ -276,6 +276,12 @@
     "common": true,
     "fields": [
       {
+        "name": "score",
+        "type": "text",
+        "label": "Score",
+        "default": "Your score"
+      },
+      {
         "name": "previousContent",
         "type": "text",
         "label": "Previous content",

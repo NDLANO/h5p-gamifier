@@ -1,5 +1,4 @@
 import Button from './button.js';
-import StatusContainers from './status-containers/status-containers.js';
 import Util from '@services/util.js';
 import './button-bar.scss';
 import './header-bar.scss';

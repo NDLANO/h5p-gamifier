@@ -109,7 +109,9 @@ export default class Main {
     this.statusContainersGlobal.addContainer({ id: 'time' });
     if (this.getMaxScore() > 0) {
       this.statusContainersGlobal.addContainer({
+        dictionary: this.params.dictionary,
         id: 'score',
+        hasScorebar: true,
         hasMaxValue: true,
         value: this.getScore(),
         maxValue: this.getMaxScore()
