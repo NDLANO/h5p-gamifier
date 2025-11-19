@@ -523,7 +523,10 @@ export default class Main {
     if (!params.skipAnimation) {
       const oldStatus = this.statusContainersExercise.getStatus('attempts');
 
-      if (oldStatus.value !== Infinity && oldStatus.value > currentAttemptsLeft && this.params.globals.get('params').visuals?.animate) {
+      if (
+        oldStatus.value !== Infinity && oldStatus.value > currentAttemptsLeft &&
+        this.params.globals.get('params').visuals?.animate
+      ) {
         this.statusContainersExercise.animate('attempts', 'head-shake');
       }
     }

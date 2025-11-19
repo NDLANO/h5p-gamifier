@@ -4,7 +4,7 @@
   "description": "Present multiple H5P contents",
   "private": true,
   "scripts": {
-    "lint": "stylelint './src/**/*.scss' && eslint './src/**/*.js'",
+    "lint": "eslint './src/**/*.js'",
     "build": "webpack --mode=production",
     "watch": "webpack --mode=development --watch"
   },
@@ -23,7 +23,7 @@
     "@babel/preset-env": "^7.28.5",
     "babel-loader": "^10.0.0",
     "css-loader": "^7.1.2",
-    "eslint-config-snordian-h5p": "github:otacke/eslint-config-snordian-h5p",
+    "eslint-config-ndla-h5p": "github:ndlano/eslint-config-ndla-h5p",
     "mini-css-extract-plugin": "^2.9.4",
     "regenerator-runtime": "^0.14.1",
     "resolve-url-loader": "^5.0.0",
