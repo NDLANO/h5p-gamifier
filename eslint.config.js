@@ -1,5 +1,5 @@
-import eslintConfigSnordianH5P from 'eslint-config-snordian-h5p';
+import eslintConfigNdlaH5P from 'eslint-config-ndla-h5p';
 
 export default [
-  eslintConfigSnordianH5P.configs['flat/recommended']
+  eslintConfigNdlaH5P.configs['flat/recommended']
 ];
