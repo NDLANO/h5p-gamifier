@@ -29,11 +29,11 @@
     "resolve-url-loader": "^5.0.0",
     "sass": "^1.98.0",
     "sass-loader": "^16.0.7",
-    "stylelint": "^16.26.1",
-    "stylelint-config-recommended": "^17.0.0",
-    "stylelint-config-recommended-scss": "^16.0.2",
+    "stylelint": "^17.5.0",
+    "stylelint-config-recommended": "^18.0.0",
+    "stylelint-config-recommended-scss": "^17.0.0",
     "webpack": "^5.105.4",
-    "webpack-cli": "^6.0.1"
+    "webpack-cli": "^7.0.2"
   },
   "dependencies": {
     "dompurify": "^3.3.3",
