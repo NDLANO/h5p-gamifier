@@ -266,7 +266,7 @@ export default class H5PContent {
       return this.instance.getTitle();
     }
 
-    return this.params.metadata?.title ||
+    return this.params.libraryParams?.metadata?.title ||
       this.params.dictionary.get('l10n.noTitle');
   }
 
