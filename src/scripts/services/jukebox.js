@@ -318,7 +318,9 @@ export default class Jukebox {
       try {
         source.stop();
       }
-      catch (error) {}
+      catch (error) {
+        console.warn(error);
+      }
       source.disconnect();
     }
 

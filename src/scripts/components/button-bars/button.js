@@ -62,7 +62,7 @@ export default class Button {
       this.enable();
     }
 
-    this.dom.addEventListener('click', (event) => {
+    this.dom.addEventListener('click', () => {
       if (this.isDisabledState) {
         return;
       }

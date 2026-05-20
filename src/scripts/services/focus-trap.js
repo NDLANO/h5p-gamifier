@@ -191,6 +191,7 @@ export default class FocusTrap {
       needsScrollIntoView = this.needsScrollIntoView(focusElement);
     }
     catch (error) {
+      console.warn(error);
       // Likely cross-origin iframe, so we can't determine.
     }
 
@@ -246,7 +247,7 @@ export default class FocusTrap {
         win = win.parent;
       }
       catch (error) {
-        throw new Error('Cross-origin iframe detected');
+        throw new Error('Cross-origin iframe detected: ', error);
       }
     }
 
@@ -264,14 +265,7 @@ export default class FocusTrap {
       return false;
     }
 
-    let rect;
-    try {
-      rect = this.getAbsoluteBoundingRect(element);
-    }
-    catch (error) {
-      throw error;
-    }
-
+    const rect = this.getAbsoluteBoundingRect(element);
     const { innerHeight, innerWidth } = window.top;
 
     return (rect.bottom <= 0 || rect.top >= innerHeight || rect.right <= 0 || rect.left >= innerWidth);
