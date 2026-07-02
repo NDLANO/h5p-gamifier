@@ -114,6 +114,10 @@ export default class H5PContent {
     }
   }
 
+  /**
+   * Check if content type is task.
+   * @returns {boolean} True, if content type is task.
+   */
   isTask() {
     return this.isTaskState;
   }

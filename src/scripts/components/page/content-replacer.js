@@ -27,10 +27,20 @@ export default class ContentReplacer {
     this.dom.append(this.textContainer);
   }
 
+  /**
+   * Get DOM.
+   * @returns {HTMLElement} Content replacer DOM.
+   */
   getDOM() {
     return this.dom;
   }
 
+  /**
+   * Update content replacer.
+   * @param {object} [params] Parameters.
+   * @param {string} [params.icon] Icon class.
+   * @param {string} [params.text] Text to display.
+   */
   update(params = {}) {
     if (params.icon) {
       this.setIcon(params.icon);
@@ -41,6 +51,10 @@ export default class ContentReplacer {
     }
   }
 
+  /**
+   * Set icon.
+   * @param {string} iconClass Icon class.
+   */
   setIcon(iconClass) {
     if (typeof iconClass !== 'string') {
       return;
@@ -50,6 +64,10 @@ export default class ContentReplacer {
     this.iconContainer.classList.add(iconClass);
   }
 
+  /**
+   * Set text.
+   * @param {string} text Text.
+   */
   setText(text) {
     if (typeof text !== 'string') {
       text = '';
@@ -58,14 +76,23 @@ export default class ContentReplacer {
     this.textContainer.textContent = text;
   }
 
+  /**
+   * Show content replacer.
+   */
   show() {
     this.dom.classList.remove('display-none');
   }
 
+  /**
+   * Hide content replacer.
+   */
   hide() {
     this.dom.classList.add('display-none');
   }
 
+  /**
+   * Animate content replacer.
+   */
   animate() {
     animate(this.dom, 'wobble');
   }

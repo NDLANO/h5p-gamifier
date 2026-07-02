@@ -157,6 +157,10 @@ export default class Page {
     return Timer.toTimecode(this.getTimeLeft());
   }
 
+  /**
+   * Show time expired message.
+   * @param {string} [text] Text to show.
+   */
   showTimeExpired(text = '') {
     this.h5pContent.hide();
 
@@ -172,6 +176,9 @@ export default class Page {
     this.params.globals.get('mainInstance').trigger('resize');
   }
 
+  /**
+   * Show attempts exceeded message.
+   */
   showAttemptsExceeded() {
     this.h5pContent.hide();
 
@@ -228,14 +235,24 @@ export default class Page {
     this.isShowingState = position === 0;
   }
 
+  /**
+   * Start timer.
+   */
   startTimer() {
     this.timer?.start(this.timeLeft);
   }
 
+  /**
+   * Stop timer.
+   */
   stopTimer() {
     this.timer?.stop();
   }
 
+  /**
+   * Check if page is showing.
+   * @returns {boolean} True, if page is showing.
+   */
   isShowing() {
     return this.isShowingState;
   }

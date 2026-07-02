@@ -380,6 +380,9 @@ export default class Main {
     this.params.jukebox.play('timeWarningGlobal');
   }
 
+  /**
+   * Handle global time expired.
+   */
   handleGlobalTimeExpired() {
     this.timeLeft = 0;
 
@@ -478,6 +481,9 @@ export default class Main {
     }
   }
 
+  /**
+   * Start timer.
+   */
   startTimer() {
     if (!this.timer) {
       return; // Timer not set or already running
@@ -496,6 +502,9 @@ export default class Main {
     this.updateScoreDisplay();
   }
 
+  /**
+   * Update exercise time.
+   */
   updateExerciseTime() {
     const currentPage = this.pages[this.currentPageIndex];
     if (!currentPage) {
@@ -543,6 +552,9 @@ export default class Main {
     this.statusContainersExercise.setStatus('attempts', { value: currentAttemptsLeft });
   }
 
+  /**
+   * Update score display.
+   */
   updateScoreDisplay() {
     const oldStatus = this.statusContainersGlobal.getStatus('score');
     if (oldStatus.value !== this.getScore() && this.params.globals.get('params').visuals?.animate) {

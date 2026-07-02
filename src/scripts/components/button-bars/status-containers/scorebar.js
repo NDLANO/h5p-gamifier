@@ -2,6 +2,12 @@ import './scorebar.scss';
 
 export default class Scorebar {
 
+  /**
+   * @class
+   * @param {object} [params] Parameters.
+   * @param {object} [params.dictionary] Dictionary for content.
+   * @param {number} [params.maxValue] Maximum value for scorebar.
+   */
   constructor(params = {}) {
     this.dom = document.createElement('div');
     this.dom.classList.add('h5p-gamifier-score-bar');
