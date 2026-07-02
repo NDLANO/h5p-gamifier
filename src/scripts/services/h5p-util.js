@@ -69,7 +69,8 @@ export const isRoot = (isStandalone) =>{
 /**
  * Stupid workaround for H5P core mutating prototype to inject its getLibraryFilePath.
  * @param {string} filePath Original filePath parameter.
- * @returns {string} versionedNameNoSpaces `${machineName}-${major}-${minor}` like H5P.Gamifier-1.1.
+ * @param {string} versionedNameNoSpaces `${machineName}-${major}-${minor}` (this.libraryInfo.versionedNameNoSpaces).
+ * @returns {string} Libary file path.
  */
 export const getLibraryFilePath = (filePath, versionedNameNoSpaces) => {
   return `${H5P.getLibraryPath(versionedNameNoSpaces)}/${filePath}`;
