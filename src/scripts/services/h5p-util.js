@@ -56,3 +56,21 @@ export const getSemanticsDefaults = (start = semantics) => {
 
   return defaults;
 };
+
+/**
+ * Stupid workaround for H5P core mutating prototype to inject its isRoot.
+ * @param {boolean} isStandalone extras.standalone from content's constructor.
+ * @returns {boolean} True, if content type is root. Else false.
+ */
+export const isRoot = (isStandalone) =>{
+  return !!isStandalone;
+};
+
+/**
+ * Stupid workaround for H5P core mutating prototype to inject its getLibraryFilePath.
+ * @param {string} filePath Original filePath parameter.
+ * @returns {string} versionedNameNoSpaces `${machineName}-${major}-${minor}` like H5P.Gamifier-1.1.
+ */
+export const getLibraryFilePath = (filePath, versionedNameNoSpaces) => {
+  return `${H5P.getLibraryPath(versionedNameNoSpaces)}/${filePath}`;
+};
