@@ -56,22 +56,3 @@ export const getSemanticsDefaults = (start = semantics) => {
 
   return defaults;
 };
-
-/**
- * Stupid workaround for H5P core mutating prototype to inject its isRoot.
- * @param {boolean} isStandalone extras.standalone from content's constructor.
- * @returns {boolean} True, if content type is root. Else false.
- */
-export const isRoot = (isStandalone) =>{
-  return !!isStandalone;
-};
-
-/**
- * Stupid workaround for H5P core mutating prototype to inject its getLibraryFilePath.
- * @param {string} filePath Original filePath parameter.
- * @param {string} versionedNameNoSpaces `${machineName}-${major}-${minor}` (this.libraryInfo.versionedNameNoSpaces).
- * @returns {string} Libary file path.
- */
-export const getLibraryFilePath = (filePath, versionedNameNoSpaces) => {
-  return `${H5P.getLibraryPath(versionedNameNoSpaces)}/${filePath}`;
-};

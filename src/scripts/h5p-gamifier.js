@@ -1,7 +1,7 @@
 import Dictionary from '@services/dictionary.js';
 import Jukebox from '@services/jukebox.js';
 import Util from '@services/util.js';
-import { getSemanticsDefaults, isRoot } from './services/h5p-util.js';
+import { getSemanticsDefaults } from './services/h5p-util.js';
 import Main from '@components/main.js';
 
 /** @constant {string} DEFAULT_DESCRIPTION Default description*/
@@ -53,7 +53,7 @@ export default class Gamifier extends H5P.EventDispatcher {
     const defaultLanguage = extras?.metadata?.defaultLanguage || 'en';
     this.languageTag = Util.formatLanguageCode(defaultLanguage);
 
-    const fullScreenSupported = isRoot(extras.standalone) && H5P.fullscreenSupported;
+    const fullScreenSupported = this.isRoot() && H5P.fullscreenSupported;
 
     this.dom = document.createElement('div');
     this.dom.classList.add('h5p-gamifier');
@@ -85,6 +85,14 @@ export default class Gamifier extends H5P.EventDispatcher {
         });
       }
     );
+  }
+
+  /**
+   * Workaround for H5P core mutating prototype to inject its isRoot, but ES6 inheritance here.
+   * @returns {boolean} True, if content type is root. Else false.
+   */
+  isRoot() {
+    return !!this.extras.standalone;
   }
 
   /**
