@@ -498,6 +498,10 @@ export default class Main {
 
   updateExerciseTime() {
     const currentPage = this.pages[this.currentPageIndex];
+    if (!currentPage) {
+      return;
+    }
+
     this.statusContainersExercise.setStatus('time', { value: currentPage.getTimeLeftTimecode() });
   }
 
@@ -518,7 +522,12 @@ export default class Main {
    * @param {boolean} [params.skipAnimation] If true, skip animation.
    */
   updateExerciseAttempts(params = {}) {
-    const currentAttemptsLeft = this.pages[this.currentPageIndex].getAttemptsLeft();
+    const currentPage = this.pages[this.currentPageIndex];
+    if (!currentPage) {
+      return;
+    }
+
+    const currentAttemptsLeft = currentPage.getAttemptsLeft();
 
     if (!params.skipAnimation) {
       const oldStatus = this.statusContainersExercise.getStatus('attempts');

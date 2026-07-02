@@ -88,6 +88,13 @@ export default class H5PContent {
       return;
     }
 
+    if (machineName === 'H5P.Blanks') {
+      this.setupAutoCheckDetectionForBlanks(libraryParams);
+    }
+    else if (machineName === 'H5P.VocabularyDrill') {
+      this.setupAutoCheckDetectionForVocabularyDrill(libraryParams);
+    }
+
     // Resize parent when children resize
     this.bubbleUp(
       this.instance, 'resize', this.params.globals.get('mainInstance')
@@ -109,6 +116,70 @@ export default class H5PContent {
 
   isTask() {
     return this.isTaskState;
+  }
+
+  /**
+   * Set up scoring workaround for H5P.Blanks with autocheck enabled.
+   * @param {object} libraryParams Library parameters.
+   */
+  setupAutoCheckDetectionForBlanks(libraryParams) {
+    const hasAutoCheck = !!libraryParams.params?.behaviour.autoCheck;
+    if (!hasAutoCheck) {
+      return;
+    }
+
+    this.contentSpecifics = this.instance.clozes.map((cloze) => cloze.getUserAnswer());
+
+    this.instance.on('xAPI', (event) => {
+      if (event.getVerb() !== 'interacted') {
+        return; // Interacted is associated with autochecking.
+      }
+
+      const isEventFromInstance = new RegExp(this.getId())
+        .test(event.getVerifiedStatementValue(['object', 'id']));
+
+      if (!isEventFromInstance) {
+        return; // Not an event from the instance directly
+      }
+
+      // We need to find out ourselves where the last answer was given and what the result was
+      const currentAnswers = this.instance.clozes.map((cloze) => cloze.getUserAnswer());
+      const interactedIndex = currentAnswers.findIndex((answer, index) => answer !== this.contentSpecifics[index]);
+      this.contentSpecifics = currentAnswers;
+      const success = this.instance.clozes[interactedIndex].correct();
+
+      this.callbacks.onScored({ id: this.getId(), score: this.instance.getScore(), success: success });
+    });
+  }
+
+  /**
+   * Set up scoring workaround for H5P.VocabularyDrill with autocheck enabled.
+   * @param {object} libraryParams Library parameters.
+   */
+  setupAutoCheckDetectionForVocabularyDrill(libraryParams) {
+    const hasAutoCheck = !!libraryParams.params?.behaviour.autoCheck;
+    if (!hasAutoCheck) {
+      return;
+    }
+
+    this.instance.on('xAPI', (event) => {
+      if (event.getVerb() !== 'interacted') {
+        return; // Interacted is associated with autochecking.
+      }
+
+      const isEventFromInstance = new RegExp(this.getId())
+        .test(event.getVerifiedStatementValue(['object', 'id']));
+
+      if (!isEventFromInstance) {
+        return; // Not an event from the instance directly
+      }
+
+      this.callbacks.onScored({
+        id: this.getId(),
+        score: this.instance.getScore(),
+        success: this.instance.wasLastInteractionCorrectAnswer()
+      });
+    });
   }
 
   /**
@@ -322,6 +393,9 @@ export default class H5PContent {
     }
 
     this.instance?.resetTask?.();
+    if (this.instance.libraryInfo.machineName === 'H5P.Blanks') {
+      this.contentSpecifics = this.instance.clozes.map(() => false);
+    }
   }
 
   /**
