@@ -107,7 +107,7 @@ export default class HeaderBar {
       buttonsContainer.append(this.buttons.get('fullscreen').getDOM());
     }
 
-    this.setButtonTabbable(this.buttons.keys()[0]);
+    this.setButtonTabbable(this.buttons.keys().next().value);
   }
 
   /**
@@ -129,7 +129,7 @@ export default class HeaderBar {
 
     this.currentTabbableButton = name;
 
-    this.buttons.foreEach((button, key) => {
+    this.buttons.forEach((button, key) => {
       if (key === name) {
         button.setTabbable(true);
         button.focus();
