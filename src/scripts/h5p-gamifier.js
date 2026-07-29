@@ -18,6 +18,7 @@ export default class Gamifier extends H5P.EventDispatcher {
     super();
 
     const defaults = Util.extend({
+      content: [],
       audio: {},
       visuals: {},
       behaviour: {
@@ -26,6 +27,10 @@ export default class Gamifier extends H5P.EventDispatcher {
       }
     }, getSemanticsDefaults());
     this.params = Util.extend(defaults, params);
+
+    this.params.content = this.params.content.filter((item) => {
+      return !!item.libraryParams?.library;
+    });
 
     this.contentId = contentId;
     this.extras = Util.extend({
@@ -53,7 +58,7 @@ export default class Gamifier extends H5P.EventDispatcher {
     const defaultLanguage = extras?.metadata?.defaultLanguage || 'en';
     this.languageTag = Util.formatLanguageCode(defaultLanguage);
 
-    const fullScreenSupported = this.isRoot() && H5P.fullscreenSupported;
+    const fullScreenSupported = true || this.isRoot() && H5P.fullscreenSupported;
 
     this.dom = document.createElement('div');
     this.dom.classList.add('h5p-gamifier');
