@@ -127,7 +127,7 @@ export default class H5PContent {
    * @param {object} libraryParams Library parameters.
    */
   setupAutoCheckDetectionForBlanks(libraryParams) {
-    const hasAutoCheck = !!libraryParams.params?.behaviour.autoCheck;
+    const hasAutoCheck = !!libraryParams.params?.behaviour?.autoCheck;
     if (!hasAutoCheck) {
       return;
     }
@@ -161,7 +161,7 @@ export default class H5PContent {
    * @param {object} libraryParams Library parameters.
    */
   setupAutoCheckDetectionForVocabularyDrill(libraryParams) {
-    const hasAutoCheck = !!libraryParams.params?.behaviour.autoCheck;
+    const hasAutoCheck = !!libraryParams.params?.behaviour?.autoCheck;
     if (!hasAutoCheck) {
       return;
     }
