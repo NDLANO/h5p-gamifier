@@ -1,6 +1,5 @@
 {
   "name": "h5p-gamifier",
-  "version": "1.2.0",
   "description": "Present multiple H5P contents",
   "private": true,
   "scripts": {
