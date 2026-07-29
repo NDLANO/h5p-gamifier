@@ -58,7 +58,7 @@ export default class Gamifier extends H5P.EventDispatcher {
     const defaultLanguage = extras?.metadata?.defaultLanguage || 'en';
     this.languageTag = Util.formatLanguageCode(defaultLanguage);
 
-    const fullScreenSupported = true || this.isRoot() && H5P.fullscreenSupported;
+    const fullScreenSupported = this.isRoot() && H5P.fullscreenSupported;
 
     this.dom = document.createElement('div');
     this.dom.classList.add('h5p-gamifier');
