@@ -36,7 +36,7 @@
     "webpack-cli": "^7.2.3"
   },
   "dependencies": {
-    "dompurify": "^3.4.15",
+    "dompurify": "^3.4.16",
     "he": "^1.2.0"
   },
   "browserslist": "> 0.5%, last 3 versions, Firefox ESR, not dead",
