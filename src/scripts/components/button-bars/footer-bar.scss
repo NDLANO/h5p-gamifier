@@ -32,9 +32,9 @@
     }
   }
 
+  // Regular text flow, flexbox would turn text runs and spans into separately spaced items
   .h5p-gamifier-page-announcer {
-    display: flex;
-    justify-content: center;
+    display: block;
     font-size: var(--h5p-theme-font-size-l);
     font-weight: bold;
     text-align: center;
