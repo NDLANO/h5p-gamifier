@@ -30,6 +30,7 @@ export default class TitleScreen {
       img: this.params.imageSrc,
       imgAlt: this.params.imageAlt,
       buttonLabel: this.params.buttonLabel,
+      icon: 'gamepad', // Not provided by H5P.Components, set in CSS
       buttonOnClick: (event) => {
         event?.preventDefault();
         this.callbacks.onStart();

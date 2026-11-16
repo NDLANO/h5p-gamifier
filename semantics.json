@@ -348,6 +348,12 @@
         "default": "You ran out of time for this content!"
       },
       {
+        "name": "attemptsExceeded",
+        "type": "text",
+        "label": "Attempts exceeded for exercise",
+        "default": "You have exceeded the maximum number of attempts for this exercise."
+      },
+      {
         "name": "settings",
         "type": "text",
         "label": "Settings",

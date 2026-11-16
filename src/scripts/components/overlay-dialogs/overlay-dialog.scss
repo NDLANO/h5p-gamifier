@@ -205,13 +205,13 @@
   }
 }
 
-@container map-container (max-width: 560px) {
+@container h5p-gamifier-main (max-width: 560px) {
   .h5p-gamifier-overlay-dialog {
     --overlay-dialog-screen-offset: 3rem;
   }
 }
 
-@container map-container (max-width: 480px) {
+@container h5p-gamifier-main (max-width: 480px) {
   .h5p-gamifier-overlay-dialog {
     --overlay-dialog-screen-offset: 2rem;
   }

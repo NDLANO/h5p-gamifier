@@ -442,7 +442,7 @@ export default class Gamifier extends H5P.EventDispatcher {
     if (verb === 'progressed') {
       xAPIEvent.data.statement.object.definition
         .extensions['http://id.tincanapi.com/extension/ending-point'] =
-          this.main.getCurrentPageIndex + 1;
+          this.main.getCurrentPageIndex() + 1;
     }
 
     return xAPIEvent;

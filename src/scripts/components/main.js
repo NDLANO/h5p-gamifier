@@ -144,6 +144,7 @@ export default class Main {
         },
         onClickButtonSettings: () => {
           this.settingsDialog.show();
+          this.fitHeightToDialog(this.settingsDialog);
         },
         onClickButtonFinish: () => {
           if (this.isSwiping) {
@@ -214,6 +215,7 @@ export default class Main {
         onClosed: () => {
           this.params.jukebox.play('dialogClosed');
           this.settingsDialog.hide({ animate: true }, () => {
+            this.dom.style.minHeight = '';
             this.params.globals.get('resize')();
           });
         },
@@ -297,6 +299,21 @@ export default class Main {
       this.params.jukebox.unmuteAll();
       this.params.jukebox.play('backgroundMusic');
     }
+  }
+
+  /**
+   * Ensure main DOM is high enough to display dialog without cutting it off.
+   * @param {OverlayDialog} dialog Dialog that is being displayed.
+   */
+  fitHeightToDialog(dialog) {
+    this.dom.style.minHeight = '';
+
+    const requiredHeight = dialog.getRequiredHeight();
+    if (requiredHeight > this.dom.offsetHeight) {
+      this.dom.style.minHeight = `${requiredHeight}px`;
+    }
+
+    this.params.globals.get('resize')();
   }
 
   /**

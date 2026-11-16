@@ -200,6 +200,14 @@ export default class OverlayDialog {
   }
 
   /**
+   * Get height that dialog content requires (incl. margins). Only valid when dialog is displayed.
+   * @returns {number} Required height in px.
+   */
+  getRequiredHeight() {
+    return this.contentContainer.offsetHeight;
+  }
+
+  /**
    * Get computed size.
    * @returns {object} Size with width and height.
    */

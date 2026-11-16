@@ -6,4 +6,9 @@
   &.display-none {
     display: none;
   }
+
+  .h5p-theme-button.h5p-theme-gamepad::before {
+    content: var(--icon-fontawesome-gamepad);
+    font-family: "H5PFontAwesome4", sans-serif;
+  }
 }

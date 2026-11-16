@@ -1,6 +1,7 @@
 .h5p-gamifier-main {
   container-name: h5p-gamifier-main;
   container-type: inline-size;
+  position: relative; // Overlay dialogs are positioned relative to main
 
   &.display-none {
     display: none;
@@ -23,7 +24,8 @@
     display: flex;
     flex-direction: column;
     height: 100dvh;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto; // Dialogs may require more height than available
 
     .h5p-gamifier-title-screen,
     .h5p-gamifier-result-screen {

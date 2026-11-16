@@ -190,7 +190,7 @@ export default class Page {
 
     this.contentReplacer.update({
       icon: 'heart',
-      text: 'You have exceeded the maximum number of attempts for this exercise.',
+      text: this.params.dictionary.get('l10n.attemptsExceeded'),
     });
     this.contentReplacer.show();
 
