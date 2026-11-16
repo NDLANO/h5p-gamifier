@@ -17,6 +17,15 @@
     display: none;
   }
 
+  /* Keep MemoryGame's absolutely positioned elements inside and reset button compact */
+  .h5p-gamifier-content-instance.h5p-memory-game {
+    position: relative;
+
+    .h5p-memory-reset {
+      width: fit-content;
+    }
+  }
+
   &.past {
     left: 0%;
   }

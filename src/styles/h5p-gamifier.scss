@@ -2,7 +2,7 @@
   /* No shadow color in H5P core theme */
   --color-box-shadow: rgb(166 166 166 / 20%);
 
-  /* Hover/active backgrounds as used by H5P.GameMap toolbar buttons */
+  /* Hover/active backgrounds for buttons */
   --color-hover: color-mix(in srgb, var(--h5p-theme-contrast-cta-light), transparent 60%);
   --color-active: color-mix(in srgb, var(--h5p-theme-contrast-cta-light), transparent 80%);
 

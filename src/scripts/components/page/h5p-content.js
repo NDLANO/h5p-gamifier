@@ -58,7 +58,7 @@ export default class H5PContent {
     const machineName = libraryParams?.library?.split?.(' ')[0];
 
     if (machineName === 'H5P.Video') {
-      // Same as H5P.GameMap: Only fit native video formats, guard against missing sources
+      // Only fit native video formats, guard against missing sources
       const sources = libraryParams.params.sources;
       const hasSources = sources?.length > 0;
       const isVideoFormat = hasSources && ['video/mp4', 'video/webm', 'video/ogg'].includes(sources[0].mime);
