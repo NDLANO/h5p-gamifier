@@ -47,8 +47,7 @@ export default class HeaderBar {
           },
           classes: [
             'h5p-gamifier-button',
-            'h5p-gamifier-button-audio',
-            'regular'
+            'h5p-gamifier-button-audio'
           ],
           type: 'toggle'
         },
@@ -68,8 +67,7 @@ export default class HeaderBar {
           },
           classes: [
             'h5p-gamifier-button',
-            'h5p-gamifier-button-settings',
-            'regular'
+            'h5p-gamifier-button-settings'
           ],
           type: 'pulse',
         },
@@ -91,8 +89,7 @@ export default class HeaderBar {
           },
           classes: [
             'h5p-gamifier-button',
-            'h5p-gamifier-button-fullscreen',
-            'regular'
+            'h5p-gamifier-button-fullscreen'
           ],
           type: 'pulse',
         },
@@ -145,33 +142,31 @@ export default class HeaderBar {
    * @param {KeyboardEvent} event Keyboard event.
    */
   handleKeydown(event) {
+    const ids = [...this.buttons.keys()];
+    if (!ids.length) {
+      return;
+    }
+
+    const currentIndex = Math.max(0, ids.indexOf(this.currentTabbableButton));
+
+    let nextIndex;
     if (event.code === 'ArrowLeft' || event.code === 'ArrowUp') {
-      if (
-        this.currentTabbableButton === 'fullscreen') {
-        this.setButtonTabbable('audio');
-      }
-      else {
-        this.setButtonTabbable('fullscreen');
-      }
+      nextIndex = (currentIndex - 1 + ids.length) % ids.length;
     }
     else if (event.code === 'ArrowRight' || event.code === 'ArrowDown') {
-      if (this.currentTabbableButton === 'audio') {
-        this.setButtonTabbable('fullscreen');
-      }
-      else {
-        this.setButtonTabbable('audio');
-      }
+      nextIndex = (currentIndex + 1) % ids.length;
     }
     else if (event.code === 'Home') {
-      this.setButtonTabbable('audio');
+      nextIndex = 0;
     }
     else if (event.code === 'End') {
-      this.setButtonTabbable('fullscreen');
+      nextIndex = ids.length - 1;
     }
     else {
       return;
     }
 
+    this.setButtonTabbable(ids[nextIndex]);
     event.preventDefault();
   }
 

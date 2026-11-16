@@ -1,7 +1,5 @@
 .h5p-gamifier-button-bar {
-  --button-size: 3rem;
-  --background-size: 1.25rem;
-  --border-size: 2px;
+  --button-size: var(--h5p-theme-spacing-xl);
 
   align-items: center;
   box-sizing: border-box;

@@ -356,6 +356,12 @@
         "type": "text",
         "label": "Unmute audio",
         "default": "Unmute audio"
+      },
+      {
+        "name": "settings",
+        "type": "text",
+        "label": "Settings",
+        "default": "Open settings"
       }
     ]
   }
