@@ -6,6 +6,7 @@ import FooterBar from '@components/button-bars/footer-bar.js';
 import Page from '@components/page/page.js';
 import SettingsDialog from '@components/overlay-dialogs/settings-dialog.js';
 import StatusContainers from '@components/button-bars/status-containers/status-containers.js';
+import ResultScreen from '@components/result-screen/result-screen.js';
 import './main.scss';
 
 /**
@@ -17,14 +18,20 @@ export default class Main {
    * @param {object} [params] Parameters.
    * @param {object} [callbacks] Callbacks.
    * @param {object} [callbacks.onProgressed] Callback when user progressed.
+   * @param {object} [callbacks.onFinished] Callback when user finished.
+   * @param {object} [callbacks.onRetry] Callback when user wants to retry.
    */
   constructor(params = {}, callbacks = {}) {
     this.params = Util.extend({
     }, params);
 
     this.callbacks = Util.extend({
-      onProgressed: () => {}
+      onProgressed: () => {},
+      onFinished: () => {},
+      onRetry: () => {}
     }, callbacks);
+
+    this.isFinished = this.params.globals.get('extras').previousState?.isFinished ?? false;
 
     this.timeLeft = this.params.globals.get('extras').previousState?.timeLeft ??
       (this.params.globals.get('params').behaviour.globalTimeLimit || Infinity) * 1000;
@@ -130,10 +137,20 @@ export default class Main {
       },
       {
         onClickButtonAudio: (on) => {
+          this.wasAudioOnBeforeResults = false; // User's explicit choice wins
           this.toggleAudio(on);
         },
         onClickButtonSettings: () => {
           this.settingsDialog.show();
+        },
+        onClickButtonFinish: () => {
+          if (this.isSwiping) {
+            // Hiding pages while swiping could prevent transitionend from firing
+            this.isShowResultsPending = true;
+            return;
+          }
+
+          this.showResults();
         },
         onClickButtonFullscreen: () => {
           console.warn('Fullscreen button clicked');
@@ -160,6 +177,23 @@ export default class Main {
     );
     this.dom.append(this.buttonBarFooter.getDOM());
 
+    const behaviour = this.globalParams.behaviour;
+    this.resultScreen = new ResultScreen(
+      {
+        dictionary: this.params.dictionary,
+        showRetryButton: behaviour.enableRetry,
+        showSolutionsButton: behaviour.enableSolutionsButton && this.getMaxScore() > 0
+      },
+      {
+        onRetry: () => {
+          this.callbacks.onRetry();
+        },
+        onShowSolutions: () => {
+          this.handleShowSolutions();
+        }
+      }
+    );
+    this.dom.append(this.resultScreen.getDOM());
 
     this.settingsDialog = new SettingsDialog(
       {
@@ -218,6 +252,11 @@ export default class Main {
     if (this.timeLeft === 0) {
       this.handleGlobalTimeExpired();
     }
+
+    // Restore results right away if user had finished before, so pages never show up
+    if (this.isFinished) {
+      this.showResults({ skipFocus: true });
+    }
   }
 
   /**
@@ -256,6 +295,15 @@ export default class Main {
       this.params.jukebox.unmuteAll();
       this.params.jukebox.play('backgroundMusic');
     }
+  }
+
+  /**
+   * Set audio on/off and keep audio button state in sync.
+   * @param {boolean} on True to turn audio on, false to turn off.
+   */
+  setAudio(on) {
+    this.toggleAudio(on);
+    this.buttonBarHeader.setButtonActive('audio', on);
   }
 
   /**
@@ -300,6 +348,9 @@ export default class Main {
    * @param {number} [to] Page number to swipe to.
    * @param {object} [options] Options.
    * @param {boolean} [options.skipFocus] If true, skip focus after swiping.
+   * @param {boolean} [options.skipTimer] If true, don't start page timer.
+   * @param {function} [options.onEnded] Callback when swiping ended.
+   * @param {boolean} [options.instant] If true, don't wait for transition (e.g. when pages are not rendered).
    */
   swipeTo(to = -1, options = {}) {
     if (
@@ -335,13 +386,12 @@ export default class Main {
       to = tmp;
     }
 
-    if (from === to) {
-      // No transition needed
-      this.handleUpdatePagePositionsEnded({ skipFocus: options.skipFocus });
-    }
-    else {
+    const endOptions = { skipFocus: options.skipFocus, onEnded: options.onEnded };
+
+    const needsTransition = from !== to && !options.instant;
+    if (needsTransition) {
       this.pages[to].registerTransitionEnd(() => {
-        this.handleUpdatePagePositionsEnded({ skipFocus: options.skipFocus });
+        this.handleUpdatePagePositionsEnded(endOptions);
       });
     }
 
@@ -363,9 +413,16 @@ export default class Main {
       this.pages.forEach((page, index) => {
         page.setPosition(index - this.currentPageIndex);
       });
+
+      if (!needsTransition) {
+        // Must be called after buttons were disabled above
+        this.handleUpdatePagePositionsEnded(endOptions);
+      }
     });
 
-    if (this.timeLeft > 0) {
+    this.pages[this.currentPageIndex].setVisited();
+
+    if (this.timeLeft > 0 && !this.isFinished && !options.skipTimer) {
       this.pages[this.currentPageIndex].startTimer();
     }
 
@@ -435,6 +492,13 @@ export default class Main {
     this.updateStatusContainers();
 
     this.params.globals.get('resize')();
+
+    options.onEnded?.();
+
+    if (this.isShowResultsPending) {
+      this.isShowResultsPending = false;
+      this.showResults();
+    }
   }
 
   /**
@@ -499,8 +563,8 @@ export default class Main {
    * Start timer.
    */
   startTimer() {
-    if (!this.timer) {
-      return; // Timer not set or already running
+    if (!this.timer || this.isFinished) {
+      return; // Timer not set or user already finished
     }
 
     this.timer.start(this.timeLeft);
@@ -616,36 +680,133 @@ export default class Main {
     this.pages.forEach((page) => {
       page.showSolutions();
     });
+
+    this.buttonBarHeader.toggleSolutionMode(true);
+  }
+
+  /**
+   * Stop global timer and all page timers.
+   */
+  stopAllTimers() {
+    this.timer?.stop();
+    this.pages.forEach((page) => {
+      page.stopTimer();
+    });
+  }
+
+  /**
+   * Show results.
+   * @param {object} [options] Options.
+   * @param {boolean} [options.skipFocus] If true, don't move focus to results.
+   */
+  showResults(options = {}) {
+    const wasFinished = this.isFinished;
+    this.isFinished = true;
+    this.isShowingResults = true;
+
+    this.stopAllTimers();
+
+    this.resultScreen.update({
+      score: this.getScore(),
+      maxScore: this.getMaxScore(),
+      pages: this.pages.map((page) => ({
+        title: page.getTitle(),
+        isTask: page.isTask(),
+        score: page.getScore(),
+        maxScore: page.getMaxScore(),
+        visited: page.isVisited()
+      }))
+    });
+
+    this.contents.classList.add('display-none');
+    this.buttonBarHeader.getDOM().classList.add('display-none');
+    this.buttonBarFooter.getDOM().classList.add('display-none');
+
+    // Audio stays off until user retries
+    if (this.isAudioOn) {
+      this.wasAudioOnBeforeResults = true;
+      this.setAudio(false);
+    }
+    this.params.jukebox.stopAll();
+    this.resultScreen.show();
+
+    this.params.globals.get('resize')();
+
+    if (!options.skipFocus) {
+      this.resultScreen.focus();
+    }
+
+    if (!wasFinished) {
+      this.callbacks.onFinished();
+    }
+  }
+
+  /**
+   * Hide results.
+   */
+  hideResults() {
+    if (!this.isShowingResults) {
+      return;
+    }
+
+    this.isShowingResults = false;
+
+    this.resultScreen.hide();
+    this.contents.classList.remove('display-none');
+    this.buttonBarHeader.getDOM().classList.remove('display-none');
+    this.buttonBarFooter.getDOM().classList.remove('display-none');
+
+    this.params.globals.get('resize')();
+  }
+
+  /**
+   * Handle user wants to see solutions.
+   */
+  handleShowSolutions() {
+    this.showSolutions();
+    this.hideResults();
+    // Pages were not rendered while results were shown, so no transition possible
+    this.swipeTo(0, { instant: true });
   }
 
   /**
    * Reset.
+   * @param {object} [options] Options.
+   * @param {boolean} [options.skipTimers] If true, don't start timers.
+   * @param {boolean} [options.skipFocus] If false, move focus to first page. Default true.
    */
-  reset() {
-    const isAudioOn = this.isAudioOn;
+  reset(options = {}) {
+    // Restore audio if user had it turned on before results were shown
+    const isAudioOn = this.isAudioOn || this.wasAudioOnBeforeResults;
+    this.wasAudioOnBeforeResults = false;
     if (isAudioOn) {
       this.params.jukebox.muteAll();
     }
 
     this.timeWarningGlobalWasPlayed = false;
+    this.isFinished = false;
+    this.hideResults();
+    this.buttonBarHeader.toggleSolutionMode(false);
 
     this.timer?.stop();
     this.timeLeft = (this.params.globals.get('params').behaviour.globalTimeLimit || Infinity) * 1000;
-    this.startTimer();
+    if (!options.skipTimers) {
+      this.startTimer();
+    }
+    this.updateGlobalTime();
 
     this.pages.forEach((page) => {
       page.reset();
     });
 
-    this.swipeTo(0, { skipFocus: true });
-    this.pages[0].startTimer();
+    // Page timer is started by swiping
+    this.swipeTo(0, { skipFocus: options.skipFocus ?? true, skipTimer: options.skipTimers, instant: true });
 
     this.updateNavigationButtons();
     this.updateStatusContainers();
 
     if (isAudioOn) {
-      this.params.jukebox.unmuteAll();
-      this.params.jukebox.play('backgroundMusic');
+      this.setAudio(true);
     }
   }
 
@@ -669,7 +830,8 @@ export default class Main {
     return {
       ...(this.currentPageIndex >= 0 && { pageIndex: this.currentPageIndex }),
       children: this.pages.map((page) => page.getCurrentState()),
-      timeLeft: this.timeLeft
+      timeLeft: this.timeLeft,
+      isFinished: this.isFinished
     };
   }
 }

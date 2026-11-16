@@ -2,6 +2,11 @@
   display: grid;
   grid-template-columns: auto 1fr 1fr auto;
 
+  // Needs higher specificity than display: grid above
+  &.display-none {
+    display: none;
+  }
+
   .h5p-gamifier-button-left {
     justify-self: start;
   }

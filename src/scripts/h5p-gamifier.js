@@ -23,10 +23,7 @@ export default class Gamifier extends H5P.EventDispatcher {
       titleScreen: {},
       audio: {},
       visuals: {},
-      behaviour: {
-        enableRetry: false, // @see {@link https://h5p.org/documentation/developers/contracts#guides-header-9}
-        enableSolutionsButton: false, // @see {@link https://h5p.org/documentation/developers/contracts#guides-header-8}
-      }
+      behaviour: {}
     }, getSemanticsDefaults());
     this.params = Util.extend(defaults, params);
 
@@ -76,10 +73,18 @@ export default class Gamifier extends H5P.EventDispatcher {
       {
         onProgressed: (index) => {
           this.handleProgressed(index);
+        },
+        onFinished: () => {
+          this.handleFinished();
+        },
+        onRetry: () => {
+          this.handleRetry();
         }
       }
     );
     this.dom.appendChild(this.main.getDOM());
+
+    this.startPageIndex = this.extras.previousState.pageIndex ?? 0;
 
     // Older states have no `started` flag, but a page index if started
     this.isStarted = this.extras.previousState.started ??
@@ -136,9 +141,33 @@ export default class Gamifier extends H5P.EventDispatcher {
   start(options = {}) {
     this.isStarted = true;
 
-    const startIndex = this.extras.previousState.pageIndex ?? 0;
-    this.main.swipeTo(startIndex, { skipFocus: options.skipFocus });
+    // If results are shown (resumed after finishing), pages are not rendered and cannot transition
+    this.main.swipeTo(this.startPageIndex, {
+      skipFocus: options.skipFocus || this.main.isFinished,
+      instant: this.main.isFinished
+    });
     this.main.startTimer();
+  }
+
+  /**
+   * Handle user finished.
+   */
+  handleFinished() {
+    const score = this.getScore();
+    const maxScore = this.getMaxScore();
+
+    const xAPIEvent = this.createXAPIEvent('completed');
+    xAPIEvent.setScoredResult(
+      score, maxScore, this, true, maxScore > 0 ? score >= maxScore : undefined
+    );
+    this.trigger(xAPIEvent);
+  }
+
+  /**
+   * Handle user wants to retry.
+   */
+  handleRetry() {
+    this.resetTask({ isUserRetry: true });
   }
 
   /**
@@ -280,9 +309,27 @@ export default class Gamifier extends H5P.EventDispatcher {
   /**
    * Reset task.
    * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-5}
+   * @param {object} [options] Options.
+   * @param {boolean} [options.isUserRetry] If true, reset was triggered by user and focus will be moved.
    */
-  resetTask() {
-    this.main.reset();
+  resetTask(options = {}) {
+    this.startPageIndex = 0;
+
+    if (!this.titleScreen) {
+      this.main.reset({ skipFocus: !options.isUserRetry });
+      return;
+    }
+
+    // Timers will be started once user clicks start on title screen again
+    this.main.reset({ skipTimers: true });
+    this.isStarted = false;
+    this.main.hide();
+    this.titleScreen.show();
+    this.trigger('resize');
+
+    if (options.isUserRetry) {
+      this.titleScreen.focus();
+    }
   }
 
   /**

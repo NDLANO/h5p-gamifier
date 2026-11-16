@@ -287,6 +287,20 @@
         "type": "boolean",
         "label": "Display content title in toolbar",
         "default": true
+      },
+      {
+        "name": "enableRetry",
+        "type": "boolean",
+        "label": "Enable \"Retry\"",
+        "description": "If checked, users can reset all contents on the result screen.",
+        "default": true
+      },
+      {
+        "name": "enableSolutionsButton",
+        "type": "boolean",
+        "label": "Enable \"Show solutions\"",
+        "description": "If checked, users can display the solutions of all contents from the result screen.",
+        "default": true
       }
     ]
   },
@@ -356,6 +370,62 @@
         "type": "text",
         "label": "Start button",
         "default": "Start"
+      },
+      {
+        "name": "resultsHeader",
+        "type": "text",
+        "label": "Results header",
+        "default": "Your results"
+      },
+      {
+        "name": "scoreBanner",
+        "type": "text",
+        "label": "Score",
+        "default": "@score of @total points",
+        "description": "@score and @total are placeholders and will be replaced by the respective values."
+      },
+      {
+        "name": "viewedBanner",
+        "type": "text",
+        "label": "Viewed contents (if there are no tasks)",
+        "default": "@viewed of @total contents viewed",
+        "description": "@viewed and @total are placeholders and will be replaced by the respective values."
+      },
+      {
+        "name": "contentColumnHeader",
+        "type": "text",
+        "label": "Content column header",
+        "default": "Content"
+      },
+      {
+        "name": "scoreColumnHeader",
+        "type": "text",
+        "label": "Score column header",
+        "default": "Score"
+      },
+      {
+        "name": "viewed",
+        "type": "text",
+        "label": "Content viewed",
+        "default": "Viewed"
+      },
+      {
+        "name": "notViewed",
+        "type": "text",
+        "label": "Content not viewed",
+        "default": "Not viewed"
+      },
+      {
+        "name": "showSolutions",
+        "type": "text",
+        "label": "Show solutions button",
+        "default": "Show solutions"
+      },
+      {
+        "name": "retry",
+        "type": "text",
+        "label": "Retry button",
+        "default": "Retry"
       }
     ]
   },
@@ -419,6 +489,12 @@
         "type": "text",
         "label": "Settings",
         "default": "Open settings"
+      },
+      {
+        "name": "finish",
+        "type": "text",
+        "label": "Finish",
+        "default": "Finish and show results"
       }
     ]
   }

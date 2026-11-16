@@ -30,4 +30,50 @@
     flex-wrap: wrap;
     gap: var(--h5p-theme-spacing-xxs);
   }
+
+  &.solution-mode {
+    background-color: var(--h5p-theme-main-cta-base);
+
+    &::before {
+      color: var(--h5p-theme-contrast-cta);
+      content: var(--icon-fontawesome-eye);
+      font-family: "H5PFontAwesome4", sans-serif;
+      font-size: var(--h5p-theme-font-size-xl);
+    }
+
+    .status-containers .status-container {
+      color: var(--h5p-theme-contrast-cta);
+    }
+
+    .h5p-gamifier-score-bar {
+      background-color: color-mix(in srgb, var(--h5p-theme-contrast-cta), transparent 60%);
+
+      .h5p-gamifier-score-bar-fill {
+        background-color: var(--h5p-theme-contrast-cta);
+      }
+    }
+
+    .h5p-gamifier-button {
+      background-color: var(--h5p-theme-main-cta-dark);
+      color: var(--h5p-theme-contrast-cta);
+
+      &:not(.disabled) {
+        &:hover {
+          /* Workaround for HFP-4349, h5p-theme-contrast-cta-dark may be be missing */
+          background-color: color-mix(in srgb, var(--h5p-theme-contrast-cta-dark, var(--h5p-theme-main-cta-dark)), transparent 60%);
+        }
+
+        &:active {
+          /* Workaround for HFP-4349, h5p-theme-contrast-cta-dark may be be missing */
+          background-color: color-mix(in srgb, var(--h5p-theme-contrast-cta-dark, var(--h5p-theme-main-cta-dark)), transparent 80%);
+        }
+
+        // Keep active toggle (audio on) distinguishable on dark background
+        &.active {
+          background-color: var(--h5p-theme-contrast-cta);
+          color: var(--h5p-theme-main-cta-base);
+        }
+      }
+    }
+  }
 }

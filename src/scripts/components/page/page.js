@@ -4,6 +4,9 @@ import H5PContent from './h5p-content.js';
 import Timer from '@services/timer.js';
 import './page.scss';
 
+/** @constant {number} TRANSITION_FALLBACK_MS Time after which transition is considered done (must exceed CSS). */
+const TRANSITION_FALLBACK_MS = 500;
+
 export default class Page {
   /**
    * @class
@@ -40,11 +43,14 @@ export default class Page {
       previousState?.timeLeft :
       (this.params.timeMax ?? Infinity) * 1000;
 
+    this.visited = previousState?.visited ?? false;
+
     this.isShowingState = false;
     this.nextTransitionId = 0;
     this.transitionCallbacks = {};
 
-    if (this.timeLeft !== Infinity && this.timeLeft > 0) {
+    // Create timer even if time already expired, so it can be used after reset
+    if (Number.isFinite(this.params.timeMax)) {
       this.timer = new Timer(
         { interval: 500 },
         {
@@ -212,7 +218,30 @@ export default class Page {
       return; // No valid callback
     }
 
-    this.dom.addEventListener('transitionend', callback, { once: true });
+    let isDone = false;
+    let fallbackTimeout;
+
+    const handleTransitionEnd = (event) => {
+      if (event && event.target !== this.dom) {
+        return; // Bubbled up from a child element, e.g. a button inside the content
+      }
+
+      if (isDone) {
+        return;
+      }
+
+      isDone = true;
+      window.clearTimeout(fallbackTimeout);
+      this.dom.removeEventListener('transitionend', handleTransitionEnd);
+      callback();
+    };
+
+    this.dom.addEventListener('transitionend', handleTransitionEnd);
+
+    // Transitions do not run if page is not rendered, so there may never be a transitionend event
+    fallbackTimeout = window.setTimeout(() => {
+      handleTransitionEnd();
+    }, TRANSITION_FALLBACK_MS);
   }
 
   /**
@@ -239,7 +268,34 @@ export default class Page {
    * Start timer.
    */
   startTimer() {
+    if (this.timeLeft <= 0) {
+      return; // Time already expired
+    }
+
     this.timer?.start(this.timeLeft);
+  }
+
+  /**
+   * Mark page as visited.
+   */
+  setVisited() {
+    this.visited = true;
+  }
+
+  /**
+   * Determine whether page was visited.
+   * @returns {boolean} True, if page was visited.
+   */
+  isVisited() {
+    return this.visited;
+  }
+
+  /**
+   * Determine whether page holds a task.
+   * @returns {boolean} True, if page holds a task.
+   */
+  isTask() {
+    return this.h5pContent.isTask();
   }
 
   /**
@@ -300,7 +356,8 @@ export default class Page {
 
     this.attemptsLeft = this.params.attemptsMax ?? Infinity;
     this.timeLeft = (this.params.timeMax ?? Infinity) * 1000;
-    this.timer?.start(this.timeLeft);
+    this.visited = false;
+    // Timer will be (re)started when page is shown
   }
 
   /**
@@ -311,7 +368,8 @@ export default class Page {
     return {
       content: this.h5pContent.getCurrentState(),
       attemptsLeft: this.getAttemptsLeft(),
-      timeLeft: this.getTimeLeft()
+      timeLeft: this.getTimeLeft(),
+      visited: this.visited
     };
   }
 }

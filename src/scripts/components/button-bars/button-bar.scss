@@ -8,4 +8,8 @@
   gap: var(--h5p-theme-spacing-xs);
   margin: var(--h5p-theme-spacing-xs);
   overflow: hidden;
+
+  &.display-none {
+    display: none;
+  }
 }

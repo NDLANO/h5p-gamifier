@@ -16,6 +16,7 @@ export default class HeaderBar {
     this.callbacks = Util.extend({
       onClickButtonAudio: () => {},
       onClickButtonSettings: () => {},
+      onClickButtonFinish: () => {},
       onClickButtonFullscreen: () => {}
     }, callbacks);
 
@@ -80,6 +81,26 @@ export default class HeaderBar {
       this.buttons.set('settings', settingsButton);
       buttonsContainer.append(this.buttons.get('settings').getDOM());
     }
+
+    const finishButton = new Button(
+      {
+        a11y: {
+          active: this.params.dictionary.get('a11y.finish')
+        },
+        classes: [
+          'h5p-gamifier-button',
+          'h5p-gamifier-button-finish'
+        ],
+        type: 'pulse',
+      },
+      {
+        onClick: () => {
+          this.callbacks.onClickButtonFinish();
+        }
+      }
+    );
+    this.buttons.set('finish', finishButton);
+    buttonsContainer.append(finishButton.getDOM());
 
     if (this.params.hasFullscreen) {
       const fullscreenButton = new Button(
@@ -208,5 +229,27 @@ export default class HeaderBar {
    */
   focus(id = '') {
     this.buttons.get(id)?.focus();
+  }
+
+  /**
+   * Toggle solution mode styling.
+   * @param {boolean} state If true, solution mode is on. Else off.
+   */
+  toggleSolutionMode(state) {
+    this.dom.classList.toggle('solution-mode', state);
+  }
+
+  /**
+   * Set active state of a (toggle) button without triggering its callback.
+   * @param {string} id Button id.
+   * @param {boolean} active If true, activate. Else deactivate.
+   */
+  setButtonActive(id = '', active) {
+    if (active) {
+      this.buttons.get(id)?.activate();
+    }
+    else {
+      this.buttons.get(id)?.deactivate();
+    }
   }
 }

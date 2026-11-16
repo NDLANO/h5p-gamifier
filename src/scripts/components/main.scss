@@ -8,6 +8,10 @@
 
   .h5p-gamifier-pages {
     overflow: hidden;
+
+    &.display-none {
+      display: none;
+    }
   }
 }
 

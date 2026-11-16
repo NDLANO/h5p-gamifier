@@ -43,6 +43,10 @@
     content: var(--icon-fontawesome-cog);
   }
 
+  &.h5p-gamifier-button-finish::before {
+    content: var(--icon-fontawesome-flag-checkered);
+  }
+
   &.h5p-gamifier-button-fullscreen {
     &::before {
       content: var(--icon-h5ptheme-expand);

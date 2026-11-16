@@ -1,0 +1,18 @@
+.h5p-gamifier-result-screen {
+  background-color: var(--h5p-theme-ui-base);
+  box-sizing: border-box;
+  color: var(--h5p-theme-text-primary);
+  outline: none;
+
+  &.display-none {
+    display: none;
+  }
+
+  .h5p-gamifier-result-screen-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--h5p-theme-spacing-s);
+    justify-content: center;
+    margin: var(--h5p-theme-spacing-m) 0;
+  }
+}

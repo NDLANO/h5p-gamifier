@@ -1,4 +1,4 @@
-import { decode } from 'he';
+import { decode, encode } from 'he';
 
 /** @constant {string} DISPLAY_INFINITY Default value for the status container */
 export const DISPLAY_INFINITY = '\u221e'; // Infinity symbol
@@ -111,6 +111,19 @@ export default class Util {
     text = div.textContent || div.innerText || '';
 
     return text;
+  }
+
+  /**
+   * Escape text to be used safely as HTML.
+   * @param {string} text Text.
+   * @returns {string} Escaped text.
+   */
+  static escapeHTML(text) {
+    if (typeof text !== 'string') {
+      return '';
+    }
+
+    return encode(text);
   }
 
   /**
