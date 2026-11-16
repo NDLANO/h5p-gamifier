@@ -120,9 +120,12 @@ export default class Slider {
 
     const percentage = (value / this.params.maxValue) * 100;
 
-    this.slider.style.background = (!this.params.vertical) ?
-      `linear-gradient(to right, var(--color-primary-dark-80) ${percentage}%, var(--color-primary-15) ${percentage}%)` :
-      `linear-gradient(to top, var(--color-primary-dark-80) ${percentage}%, var(--color-primary-15) ${percentage}%)`;
+    const direction = (!this.params.vertical) ? 'to right' : 'to top';
+    const colorFilled = 'var(--h5p-theme-main-cta-base)';
+    const colorEmpty = 'var(--h5p-theme-contrast-cta-light)';
+
+    this.slider.style.background =
+      `linear-gradient(${direction}, ${colorFilled} ${percentage}%, ${colorEmpty} ${percentage}%)`;
   }
 
   /**

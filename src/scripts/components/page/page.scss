@@ -2,7 +2,7 @@
   box-sizing: border-box;
   float: left;
   margin-left: -100%;
-  padding: 0 0.5rem;
+  padding: 0 var(--h5p-theme-spacing-xs);
   position: relative;
   transition: left .35s;
   width: 100%;

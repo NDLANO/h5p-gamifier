@@ -1,20 +1,10 @@
 .h5p-gamifier {
+  /* No shadow color in H5P core theme */
   --color-box-shadow: rgb(166 166 166 / 20%);
-  --color-disabled: rgb(128 128 128 / 95%);
-  --color-text-light: #fff;
 
-  --color-primary: rgb(26, 115, 217);
-  --color-primary-5: rgba(26, 115, 217, .05);
-  --color-primary-10: rgba(26, 115, 217, .1);
-  --color-primary-15: rgba(26, 115, 217, .15);
-  --color-primary-25: rgba(26, 115, 217, .25);
-  --color-primary-90: rgba(26, 115, 217, .9);
-  --color-primary-95: rgba(26, 115, 217, .95);
-
-  --color-primary-dark: rgb(23, 104, 196);
-  --color-primary-dark-80: rgb(23 104 196 / 80%);
-
-  --color-negative: hsl(358, 53%, 41%);
+  /* Hover/active backgrounds as used by H5P.GameMap toolbar buttons */
+  --color-hover: color-mix(in srgb, var(--h5p-theme-contrast-cta-light), transparent 60%);
+  --color-active: color-mix(in srgb, var(--h5p-theme-contrast-cta-light), transparent 80%);
 
   /* Icons */
   --icon-fontawesome-heart: '\f004';
@@ -29,4 +19,7 @@
   --icon-fontawesome-chevron-right: '\f054';
   --icon-fontawesome-xmark: '\f00d';
   --icon-fontawesome-cog: '\f013';
+
+  background-color: var(--h5p-theme-ui-base);
+  color: var(--h5p-theme-text-primary);
 }

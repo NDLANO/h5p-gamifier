@@ -1,6 +1,10 @@
 .h5p-gamifier-overlay-dialog.settings {
   .settings-group {
-    margin-bottom: 1rem;
+    margin-bottom: var(--h5p-theme-spacing-m);
+  }
+
+  .h5p-gamifier-settings-label {
+    color: var(--h5p-theme-text-primary);
   }
 
   .settings-group:last-child {

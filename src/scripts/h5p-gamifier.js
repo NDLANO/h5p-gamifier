@@ -105,6 +105,7 @@ export default class Gamifier extends H5P.EventDispatcher {
    * @param {H5P.jQuery} $wrapper H5P wrapper.
    */
   attach($wrapper) {
+    $wrapper.get(0).classList.add('h5p-theme');
     $wrapper.get(0).append(this.dom);
   }
 

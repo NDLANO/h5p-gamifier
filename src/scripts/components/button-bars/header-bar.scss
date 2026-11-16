@@ -1,5 +1,5 @@
 .h5p-gamifier-button-bar.header {
-    --padding-header: 0.5rem;
+    --padding-header: var(--h5p-theme-spacing-xs);
     box-shadow: 0.125rem 0.125rem 0.5rem var(--color-box-shadow);
     flex-wrap: wrap;
     justify-content: center;
@@ -7,7 +7,7 @@
     padding: var(--padding-header);
 
   .status-containers {
-    margin-inline: auto 1rem;
+    margin-inline: auto var(--h5p-theme-spacing-m);
 
     .status-container-time {
       &::before {
@@ -28,6 +28,6 @@
     justify-content: center;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: var(--h5p-theme-spacing-xs);
   }
 }

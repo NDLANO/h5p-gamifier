@@ -56,10 +56,10 @@
 
     .h5p-gamifier-overlay-dialog-button-close {
       grid-area: 1 / 1 / 1 / 1;
-      background: #fff;
+      background: var(--h5p-theme-ui-base);
       border: none;
       border-radius: 50%;
-      color: #222;
+      color: var(--h5p-theme-text-primary);
       cursor: pointer;
       height: 2.25em;
       justify-self: end;
@@ -78,7 +78,8 @@
       &::after {
         font-family: "H5PFontAwesome4", sans-serif;
         content: var(--icon-fontawesome-xmark);
-        border: 1px solid #222;
+        border: 1px solid var(--h5p-theme-text-primary);
+        color: var(--h5p-theme-text-primary);
         text-align: center;
         border-radius: 50%;
         width: 1.5em;
@@ -90,10 +91,11 @@
 
     .h5p-gamifier-overlay-dialog-content {
       grid-area: 1 / 1 / 1 / 1;
-      background-color: #fff;
-      border: 0.75rem solid #fff;
-      border-radius: 0.5rem;
+      background-color: var(--h5p-theme-ui-base);
+      border: var(--h5p-theme-spacing-s) solid var(--h5p-theme-ui-base);
+      border-radius: var(--h5p-theme-border-radius-large);
       box-sizing: border-box;
+      color: var(--h5p-theme-text-primary);
       margin-bottom: calc(var(--overlay-dialog-screen-offset, 4rem) / 2);
       margin-left: calc(var(--overlay-dialog-screen-offset, 4rem) / 2);
       margin-top: calc(var(--overlay-dialog-screen-offset, 4rem) / 2);
@@ -102,17 +104,18 @@
 
       .h5p-gamifier-overlay-dialog-headline {
         align-items: start;
-        border-bottom: 1px solid var(--color-shadow-dark);
+        border-bottom: 1px solid var(--h5p-theme-stroke-1);
         box-sizing: border-box;
         display: flex;
         flex-direction: row;
-        gap: 1rem;
+        gap: var(--h5p-theme-spacing-m);
         justify-content: space-between;
-        padding: 0 0.25rem 0 0;
+        padding: 0 var(--h5p-theme-spacing-xxs) 0 0;
 
         .h5p-gamifier-overlay-dialog-headline-text {
+          color: var(--h5p-theme-text-primary);
           display: -webkit-box;
-          font-size: 1.25rem;
+          font-size: var(--h5p-theme-font-size-xl);
           font-weight: bold;
           line-clamp: 3;
           -webkit-line-clamp: 3;
@@ -124,7 +127,7 @@
 
       .h5p-gamifier-overlay-dialog-instance-container {
         height: calc(100% - 1rem);
-        margin-top: 0.5rem;
+        margin-top: var(--h5p-theme-spacing-xs);
         width: calc(100% - 0.25rem);
 
         .h5p-gamifier-overlay-dialog-instance-wrapper {

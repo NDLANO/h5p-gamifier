@@ -1,24 +1,24 @@
 .h5p-gamifier-button {
-  border: 2px solid var(--color-text-light); /* Same px value as used by Joubel in Interactive Book */
-  border-radius: 3px; /* Same px value as used by Joubel in Interactive Book */
-  color: var(--color-primary);
+  border: 2px solid var(--h5p-theme-ui-base);
+  border-radius: var(--h5p-theme-border-radius-small);
+  color: var(--h5p-theme-main-cta-base);
   flex-shrink: 0;
-  font-size: 1em;
+  font-size: var(--h5p-theme-font-size-m);
   height: var(--button-size);
   padding: 0;
   position: relative;
   width: var(--button-size);
 
   &.regular {
-    background-color: var(--color-primary-5);
+    background-color: var(--h5p-theme-contrast-cta-light);
   }
 
   &.plain {
-    background-color: var(--color-text-light);
+    background-color: var(--h5p-theme-ui-base);
   }
 
   &::before {
-    color: var(--color-disabled);
+    color: var(--h5p-theme-text-third);
     font-family: "H5PFontAwesome4", sans-serif;
     font-size: var(--background-size);
     height: var(--background-size);
@@ -64,16 +64,16 @@
 
   &:not(.disabled) {
     &::before {
-      color: var(--color-primary);
+      color: var(--h5p-theme-main-cta-base);
     }
 
     &:hover {
-      background-color: var(--color-primary-10);
+      background-color: var(--color-hover);
       cursor: pointer;
     }
 
     &:active {
-      background-color: var(--color-primary-25);
+      background-color: var(--color-active);
     }
   }
 }
