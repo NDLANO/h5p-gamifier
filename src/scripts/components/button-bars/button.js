@@ -207,6 +207,19 @@ export default class Button {
   }
 
   /**
+   * Set label for assistive technologies (pulse buttons), kept when (de)activating.
+   * @param {string} label Label.
+   */
+  setA11yLabel(label) {
+    this.params.a11y.active = label;
+    this.params.a11y.inactive = label;
+
+    if (!this.isDisabledState) {
+      this.dom.setAttribute('aria-label', label);
+    }
+  }
+
+  /**
    * Determine whether button is active.
    * @returns {boolean} True, if button is active, else false.
    */

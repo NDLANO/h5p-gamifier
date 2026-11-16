@@ -495,6 +495,18 @@
         "type": "text",
         "label": "Finish",
         "default": "Finish and show results"
+      },
+      {
+        "name": "enterFullscreen",
+        "type": "text",
+        "label": "Enter fullscreen",
+        "default": "Enter fullscreen mode"
+      },
+      {
+        "name": "exitFullscreen",
+        "type": "text",
+        "label": "Exit fullscreen",
+        "default": "Exit fullscreen mode"
       }
     ]
   }

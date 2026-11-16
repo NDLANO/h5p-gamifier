@@ -106,7 +106,7 @@ export default class HeaderBar {
       const fullscreenButton = new Button(
         {
           a11y: {
-            active: this.params.dictionary.get('a11y.TODO'),
+            active: this.params.dictionary.get('a11y.enterFullscreen'),
           },
           classes: [
             'h5p-gamifier-button',
@@ -229,6 +229,22 @@ export default class HeaderBar {
    */
   focus(id = '') {
     this.buttons.get(id)?.focus();
+  }
+
+  /**
+   * Update fullscreen button to reflect fullscreen state.
+   * @param {boolean} isFullscreen True, if in fullscreen mode.
+   */
+  setFullscreenState(isFullscreen) {
+    const button = this.buttons.get('fullscreen');
+    if (!button) {
+      return;
+    }
+
+    button.getDOM().classList.toggle('exit', isFullscreen);
+    button.setA11yLabel(this.params.dictionary.get(
+      isFullscreen ? 'a11y.exitFullscreen' : 'a11y.enterFullscreen'
+    ));
   }
 
   /**

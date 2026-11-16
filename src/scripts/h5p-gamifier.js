@@ -8,6 +8,9 @@ import TitleScreen from '@components/title-screen/title-screen.js';
 /** @constant {string} DEFAULT_DESCRIPTION Default description*/
 const DEFAULT_DESCRIPTION = 'Gamifier';
 
+/** @constant {number} FULLSCREEN_SETTLE_DELAY_MS Delay to let browser settle dimensions. */
+const FULLSCREEN_SETTLE_DELAY_MS = 200;
+
 export default class Gamifier extends H5P.EventDispatcher {
   /**
    * @class
@@ -79,10 +82,17 @@ export default class Gamifier extends H5P.EventDispatcher {
         },
         onRetry: () => {
           this.handleRetry();
+        },
+        onFullscreenClicked: () => {
+          this.toggleFullscreen();
         }
       }
     );
     this.dom.appendChild(this.main.getDOM());
+
+    if (fullScreenSupported) {
+      this.setupFullscreenHandlers();
+    }
 
     this.startPageIndex = this.extras.previousState.pageIndex ?? 0;
 
@@ -147,6 +157,57 @@ export default class Gamifier extends H5P.EventDispatcher {
       instant: this.main.isFinished
     });
     this.main.startTimer();
+  }
+
+  /**
+   * Set up handlers for fullscreen mode.
+   */
+  setupFullscreenHandlers() {
+    // Core triggers these events, also if user exits fullscreen via Escape key
+    this.on('enterFullScreen', () => {
+      this.main.setFullscreen(true);
+
+      // Some browsers need a moment until final dimensions are available
+      window.setTimeout(() => {
+        this.trigger('resize');
+      }, FULLSCREEN_SETTLE_DELAY_MS);
+    });
+
+    this.on('exitFullScreen', () => {
+      this.main.setFullscreen(false);
+    });
+
+    const handleOrientationChange = () => {
+      if (!H5P.isFullscreen) {
+        return;
+      }
+
+      window.setTimeout(() => {
+        this.trigger('resize');
+      }, FULLSCREEN_SETTLE_DELAY_MS);
+    };
+
+    if (screen?.orientation?.addEventListener) {
+      screen.orientation.addEventListener('change', handleOrientationChange);
+    }
+    else {
+      window.addEventListener('orientationchange', handleOrientationChange);
+    }
+  }
+
+  /**
+   * Toggle fullscreen mode.
+   */
+  toggleFullscreen() {
+    if (H5P.isFullscreen) {
+      H5P.exitFullScreen?.();
+      return;
+    }
+
+    const container = this.dom.closest('.h5p-container');
+    if (container) {
+      H5P.fullScreen(H5P.jQuery(container), this);
+    }
   }
 
   /**

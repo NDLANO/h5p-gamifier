@@ -20,6 +20,7 @@ export default class Main {
    * @param {object} [callbacks.onProgressed] Callback when user progressed.
    * @param {object} [callbacks.onFinished] Callback when user finished.
    * @param {object} [callbacks.onRetry] Callback when user wants to retry.
+   * @param {object} [callbacks.onFullscreenClicked] Callback when user clicked fullscreen button.
    */
   constructor(params = {}, callbacks = {}) {
     this.params = Util.extend({
@@ -28,7 +29,8 @@ export default class Main {
     this.callbacks = Util.extend({
       onProgressed: () => {},
       onFinished: () => {},
-      onRetry: () => {}
+      onRetry: () => {},
+      onFullscreenClicked: () => {}
     }, callbacks);
 
     this.isFinished = this.params.globals.get('extras').previousState?.isFinished ?? false;
@@ -153,7 +155,7 @@ export default class Main {
           this.showResults();
         },
         onClickButtonFullscreen: () => {
-          console.warn('Fullscreen button clicked');
+          this.callbacks.onFullscreenClicked();
         }
       }
     );
@@ -295,6 +297,15 @@ export default class Main {
       this.params.jukebox.unmuteAll();
       this.params.jukebox.play('backgroundMusic');
     }
+  }
+
+  /**
+   * Set fullscreen state.
+   * @param {boolean} isFullscreen True, if in fullscreen mode.
+   */
+  setFullscreen(isFullscreen) {
+    this.buttonBarHeader.setFullscreenState(isFullscreen);
+    this.params.globals.get('resize')();
   }
 
   /**
