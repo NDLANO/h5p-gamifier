@@ -3,6 +3,7 @@ import Jukebox from '@services/jukebox.js';
 import Util from '@services/util.js';
 import { getSemanticsDefaults } from './services/h5p-util.js';
 import Main from '@components/main.js';
+import TitleScreen from '@components/title-screen/title-screen.js';
 
 /** @constant {string} DEFAULT_DESCRIPTION Default description*/
 const DEFAULT_DESCRIPTION = 'Gamifier';
@@ -19,6 +20,7 @@ export default class Gamifier extends H5P.EventDispatcher {
 
     const defaults = Util.extend({
       content: [],
+      titleScreen: {},
       audio: {},
       visuals: {},
       behaviour: {
@@ -79,17 +81,77 @@ export default class Gamifier extends H5P.EventDispatcher {
     );
     this.dom.appendChild(this.main.getDOM());
 
+    // Older states have no `started` flag, but a page index if started
+    this.isStarted = this.extras.previousState.started ??
+      typeof this.extras.previousState.pageIndex === 'number';
+
+    if (this.params.titleScreen.showTitleScreen) {
+      this.titleScreen = new TitleScreen(
+        {
+          title: this.params.titleScreen.title || this.getTitle(),
+          introduction: this.params.titleScreen.introduction,
+          imageSrc: this.params.titleScreen.image?.path ?
+            H5P.getPath(this.params.titleScreen.image.path, this.contentId) :
+            undefined,
+          imageAlt: this.params.titleScreen.imageAltText,
+          buttonLabel: this.dictionary.get('l10n.startButton')
+        },
+        {
+          onStart: () => {
+            this.handleTitleScreenStart();
+          }
+        }
+      );
+      this.dom.prepend(this.titleScreen.getDOM());
+    }
+
+    const showTitleScreen = this.titleScreen && !this.isStarted;
+    if (showTitleScreen) {
+      this.main.hide();
+    }
+    else {
+      this.titleScreen?.hide();
+    }
+
     Util.callOnceVisible(
       this.dom, () => {
         this.trigger('resize');
 
+        if (showTitleScreen) {
+          return; // Will be started by title screen
+        }
+
         window.requestAnimationFrame(() => {
-          const startIndex = this.extras.previousState.pageIndex ?? 0;
-          this.main.swipeTo(startIndex, { skipFocus: true });
-          this.main.startTimer();
+          this.start({ skipFocus: true });
         });
       }
     );
+  }
+
+  /**
+   * Start the game: Move to start page and start timers.
+   * @param {object} [options] Options.
+   * @param {boolean} [options.skipFocus] If true, don't move focus to page.
+   */
+  start(options = {}) {
+    this.isStarted = true;
+
+    const startIndex = this.extras.previousState.pageIndex ?? 0;
+    this.main.swipeTo(startIndex, { skipFocus: options.skipFocus });
+    this.main.startTimer();
+  }
+
+  /**
+   * Handle user clicked start button on title screen.
+   */
+  handleTitleScreenStart() {
+    this.titleScreen.hide();
+    this.main.show();
+    this.trigger('resize');
+
+    window.requestAnimationFrame(() => {
+      this.start();
+    });
   }
 
   /**
@@ -306,6 +368,9 @@ export default class Gamifier extends H5P.EventDispatcher {
    * @returns {object} Current state.
    */
   getCurrentState() {
-    return this.main.getCurrentState();
+    return {
+      ...this.main.getCurrentState(),
+      started: this.isStarted
+    };
   }
 }

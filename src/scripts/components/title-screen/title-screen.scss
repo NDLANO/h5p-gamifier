@@ -1,0 +1,9 @@
+.h5p-gamifier-title-screen {
+  background-color: var(--h5p-theme-ui-base);
+  box-sizing: border-box;
+  color: var(--h5p-theme-text-primary);
+
+  &.display-none {
+    display: none;
+  }
+}

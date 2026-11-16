@@ -229,6 +229,20 @@ export default class Main {
   }
 
   /**
+   * Show main content.
+   */
+  show() {
+    this.dom.classList.remove('display-none');
+  }
+
+  /**
+   * Hide main content.
+   */
+  hide() {
+    this.dom.classList.add('display-none');
+  }
+
+  /**
    * Toggle audio on/off.
    * @param {boolean} [on] True to turn audio on, false to turn off.
    */

@@ -1,5 +1,56 @@
 [
   {
+    "name": "titleScreen",
+    "type": "group",
+    "label": "Title screen",
+    "importance": "low",
+    "fields": [
+      {
+        "name": "showTitleScreen",
+        "type": "boolean",
+        "label": "Show title screen",
+        "description": "If checked, a title screen will be shown before the contents.",
+        "default": false
+      },
+      {
+        "name": "title",
+        "type": "text",
+        "label": "Title",
+        "description": "If left empty, the title of this content will be used.",
+        "optional": true
+      },
+      {
+        "name": "introduction",
+        "type": "text",
+        "widget": "html",
+        "label": "Introduction",
+        "optional": true,
+        "enterMode": "p",
+        "tags": [
+          "sub",
+          "sup",
+          "strong",
+          "em",
+          "p",
+          "code"
+        ]
+      },
+      {
+        "name": "image",
+        "type": "image",
+        "label": "Image",
+        "optional": true
+      },
+      {
+        "name": "imageAltText",
+        "type": "text",
+        "label": "Alternative text for image",
+        "description": "Describe what can be seen in the image. The text is read by text-to-speech tools needed by visually impaired users.",
+        "optional": true
+      }
+    ]
+  },
+  {
     "name": "content",
     "type": "list",
     "label": "List of contents",
@@ -299,6 +350,12 @@
         "type": "text",
         "label": "Volume of sound effects",
         "default": "Volume of sound effects"
+      },
+      {
+        "name": "startButton",
+        "type": "text",
+        "label": "Start button",
+        "default": "Start"
       }
     ]
   },

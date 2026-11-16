@@ -2,6 +2,10 @@
   container-name: h5p-gamifier-main;
   container-type: inline-size;
 
+  &.display-none {
+    display: none;
+  }
+
   .h5p-gamifier-pages {
     overflow: hidden;
   }
