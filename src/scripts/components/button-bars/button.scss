@@ -13,10 +13,6 @@
     background-color: var(--h5p-theme-contrast-cta-light);
   }
 
-  &.plain {
-    background-color: var(--h5p-theme-ui-base);
-  }
-
   &::before {
     color: var(--h5p-theme-text-third);
     font-family: "H5PFontAwesome4", sans-serif;
@@ -52,14 +48,6 @@
 
   &.h5p-gamifier-button-fullscreen.exit::before {
     content: var(--icon-fontawesome-compress);
-  }
-
-  &.h5p-gamifier-button-left::before {
-    content: var(--icon-fontawesome-chevron-left);
-  }
-
-  &.h5p-gamifier-button-right::before {
-    content: var(--icon-fontawesome-chevron-right);
   }
 
   &:not(.disabled) {

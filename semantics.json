@@ -259,6 +259,18 @@
         "default": "Untitled"
       },
       {
+        "name": "previousContentLabel",
+        "type": "text",
+        "label": "Previous content button",
+        "default": "Previous"
+      },
+      {
+        "name": "nextContentLabel",
+        "type": "text",
+        "label": "Next content button",
+        "default": "Next"
+      },
+      {
         "name": "timeExpiredExercise",
         "type": "text",
         "label": "Time expired for exercise",

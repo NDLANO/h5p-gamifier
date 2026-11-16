@@ -1,8 +1,31 @@
 .h5p-gamifier-button-bar.footer {
-  box-shadow: 0.125rem 0.125rem 0.25rem var(--color-box-shadow);
   display: grid;
   grid-template-columns: auto 1fr 1fr auto;
 
+  .h5p-gamifier-button-left {
+    justify-self: start;
+  }
+
+  .h5p-gamifier-button-right {
+    justify-self: end;
+  }
+
+  .h5p-theme-nav-button {
+    &.display-none {
+      display: none;
+    }
+
+    // Mimic H5P.Components disabled look without using native disabled attribute (keeps focus)
+    &.h5p-gamifier-disabled {
+      cursor: default;
+      opacity: 0.4;
+
+      &:hover,
+      &:active {
+        background-color: var(--h5p-theme-secondary-cta-base);
+      }
+    }
+  }
 
   .h5p-gamifier-page-announcer {
     display: flex;
@@ -78,5 +101,13 @@
       grid-area: 1 / 2 / 2 / 3;
       justify-self: end;
     }
+  }
+}
+
+// Same approach as H5P.Components Navigation: Only show icons if space is tight
+@container h5p-gamifier-main (max-width: 20rem) {
+  .h5p-gamifier-button-bar.footer .h5p-theme-nav-button {
+    --label-display: none;
+    --button-justify: center;
   }
 }
