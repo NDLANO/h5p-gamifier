@@ -306,6 +306,21 @@ export default class Page {
   }
 
   /**
+   * Pause media playback of content.
+   */
+  pauseMedia() {
+    this.h5pContent.pauseMedia();
+  }
+
+  /**
+   * Determine whether page holds media content that plays sound itself.
+   * @returns {boolean} True, if page holds H5P.Audio or H5P.Video.
+   */
+  isMedia() {
+    return this.h5pContent.isMedia();
+  }
+
+  /**
    * Check if page is showing.
    * @returns {boolean} True, if page is showing.
    */

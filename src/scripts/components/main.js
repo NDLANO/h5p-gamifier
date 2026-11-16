@@ -9,6 +9,9 @@ import StatusContainers from '@components/button-bars/status-containers/status-c
 import ResultScreen from '@components/result-screen/result-screen.js';
 import './main.scss';
 
+/** @constant {number} MUSIC_FADE_IMMEDIATE_MS Fade time for (almost) immediate volume change. */
+const MUSIC_FADE_IMMEDIATE_MS = 1;
+
 /**
  * Main DOM component incl. main controller.
  */
@@ -225,6 +228,8 @@ export default class Main {
         onValueChanged: (id, value) => {
           if (id === 'volumeMusic') {
             this.params.jukebox.setVolumeGroup('background', value);
+            // Setting volume resets muting
+            this.updateBackgroundMusicMuting({ immediate: true });
           }
           else if (id === 'volumeSFX') {
             this.params.jukebox.setVolumeGroup('default', value);
@@ -298,7 +303,23 @@ export default class Main {
     else {
       this.params.jukebox.unmuteAll();
       this.params.jukebox.play('backgroundMusic');
+      // Playing resets volume
+      this.updateBackgroundMusicMuting({ immediate: true });
     }
+  }
+
+  /**
+   * Mute background music while content that plays sound itself is showing.
+   * @param {object} [options] Options.
+   * @param {boolean} [options.immediate] If true, don't fade gently.
+   */
+  updateBackgroundMusicMuting(options = {}) {
+    const isMediaShowing = !this.isShowingResults && !!this.pages[this.currentPageIndex]?.isMedia();
+
+    this.params.jukebox.fade('backgroundMusic', {
+      type: isMediaShowing ? 'out' : 'in',
+      ...(options.immediate && { time: MUSIC_FADE_IMMEDIATE_MS }),
+    });
   }
 
   /**
@@ -393,9 +414,15 @@ export default class Main {
 
     let from = this.currentPageIndex;
 
+    // Pages stay attached when not showing, so media would keep playing
+    if (from !== to) {
+      this.pages[from]?.pauseMedia();
+    }
+
     this.isSwiping = true;
 
     this.currentPageIndex = to;
+    this.updateBackgroundMusicMuting();
 
     let screenReader = this.params.dictionary.get('a11y.movedTo')
       .replace(/@current/g, to + 1)
@@ -719,6 +746,7 @@ export default class Main {
     this.timer?.stop();
     this.pages.forEach((page) => {
       page.stopTimer();
+      page.pauseMedia();
     });
   }
 

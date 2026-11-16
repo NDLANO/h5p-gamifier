@@ -1,6 +1,9 @@
 import Util from '@services/util.js';
 import { isInstanceTask } from '@services/h5p-util.js';
 
+/** @constant {string[]} MEDIA_MACHINE_NAMES Content types that play sound themselves. */
+const MEDIA_MACHINE_NAMES = ['H5P.Audio', 'H5P.Video'];
+
 export default class H5PContent {
 
   /**
@@ -55,13 +58,13 @@ export default class H5PContent {
     const machineName = libraryParams?.library?.split?.(' ')[0];
 
     if (machineName === 'H5P.Video') {
-      libraryParams.params.visuals.fit = (
-        libraryParams.params.sources.length && (
-          libraryParams.params.sources[0].mime === 'video/mp4' ||
-          libraryParams.params.sources[0].mime === 'video/webm' ||
-          libraryParams.params.sources[0].mime === 'video/ogg'
-        )
-      );
+      // Same as H5P.GameMap: Only fit native video formats, guard against missing sources
+      const sources = libraryParams.params.sources;
+      const hasSources = sources?.length > 0;
+      const isVideoFormat = hasSources && ['video/mp4', 'video/webm', 'video/ogg'].includes(sources[0].mime);
+
+      libraryParams.params.visuals = libraryParams.params.visuals ?? {};
+      libraryParams.params.visuals.fit = isVideoFormat || false;
     }
 
     if (machineName === 'H5P.Audio') {
@@ -302,6 +305,31 @@ export default class H5PContent {
    */
   hide() {
     this.dom.classList.add('display-none');
+  }
+
+  /**
+   * Determine whether content is a media content that plays sound itself.
+   * @returns {boolean} True, if content is H5P.Audio or H5P.Video.
+   */
+  isMedia() {
+    const machineName = this.params.libraryParams?.library?.split?.(' ')[0];
+    return MEDIA_MACHINE_NAMES.includes(machineName);
+  }
+
+  /**
+   * Pause media playback, e.g. H5P.Video or H5P.Audio, if content supports it.
+   */
+  pauseMedia() {
+    if (!this.isAttached || typeof this.instance?.pause !== 'function') {
+      return;
+    }
+
+    try {
+      this.instance.pause();
+    }
+    catch {
+      // Some players (e.g. YouTube) may not be ready yet, nothing to pause then
+    }
   }
 
   /**
